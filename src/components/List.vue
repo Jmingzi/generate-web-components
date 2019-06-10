@@ -11,7 +11,7 @@
         type="danger"
         @click="replaceState()"
       >
-        从本地替换state
+        从本地导入state
       </el-button>
     </template>
     <template v-else>
@@ -28,7 +28,7 @@
         生成js文件
       </el-button>
     </template>
-    <p>节点树</p>
+    <p class="mtb10 bg-f2 p10 f14">节点树</p>
     <tree
       ref="tree"
       :list="nodeTree"
@@ -107,7 +107,7 @@ export default {
       // }, {
       //   baseURL: 'http://localhost:3000'
       // })
-      const loading = this.$loading('处理中')
+      const loading = this.$loading()
       const form = document.createElement('form')
       form.action = 'http://localhost:3003/generate'
       // form.action = 'http://iming.work:3003/generate'

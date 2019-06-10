@@ -27,7 +27,10 @@
       </el-row>
     </el-main>
     <el-footer>
-      <div class="tc c-999">@jmingzi</div>
+      <div class="tc c-999 pt10">
+        @jmingzi
+        <p>全局文件：<a href="https://iming.work/demo/generate-web-components/service/public/define.js" target="_blank">https://iming.work/demo/generate-web-components/service/public/define.js</a></p>
+      </div>
     </el-footer>
   </el-container>
 </template>
