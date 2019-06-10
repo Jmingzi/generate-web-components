@@ -41,11 +41,11 @@ app.post('/generate', function (req, res) {
       fs.readFileSync(path.resolve(__dirname, `../src/assets/${file}.ts`), 'utf8')
         .replace(/\/\/ substr start for service([\s\S]+?)\/\/ substr end for service/, (a, b) => { script += b })
     })
-    fs.writeFileSync(commonPath, script, 'utf8')
     // 替换 export
-    script = script.replace(/exports\./g, 'var ')
+    script = script.replace(/export/g, '')
     // 处理单位
-    script = script.replace(/'px'/g, 'vw')
+    script = script.replace(/'px'\)/g, '"vw")')
+    fs.writeFileSync(commonPath, script, 'utf8')
     try {
       execSync(`tsc ${commonPath}`)
     } catch (e) {

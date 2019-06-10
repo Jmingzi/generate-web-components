@@ -109,8 +109,8 @@ export default {
       // })
       const loading = this.$loading('处理中')
       const form = document.createElement('form')
-      // form.action = 'http://localhost:3000/generate'
-      form.action = 'http://iming.work:3003/generate'
+      form.action = 'http://localhost:3003/generate'
+      // form.action = 'http://iming.work:3003/generate'
       form.method = 'POST'
       const input = document.createElement('input')
       input.name = 'state'

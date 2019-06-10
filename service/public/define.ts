@@ -27,7 +27,10 @@ function addUnit (val: any, unit?: 'px' | 'vw') {
   if (typeof val === 'string') {
     val = val.trim()
   }
-  return unit && /^\d+$/.test(val) ? `${val}${unit}` : val
+  const isVw = unit === 'vw'
+  return unit && /^\d+$/.test(val)
+    ? `${isVw ? `${val / 3.75}vw` : `${val}${unit}`}`
+    : val
 }
 
 function objAddUnit (obj: any, unit?: 'px' | 'vw') {
@@ -70,8 +73,8 @@ function objAddUnit (obj: any, unit?: 'px' | 'vw') {
     customStyle
   } = style
   const base = {
-    width: isAutoWidth ? 'auto' : `${width}px`,
-    height: isAutoHeight ? 'auto' : `${height}px`,
+    width: isAutoWidth ? 'auto' : addUnit(width, "vw"),
+    height: isAutoHeight ? 'auto' : addUnit(height, "vw"),
     textAlign: textAlign
   }
   if (returnObj) {
@@ -85,14 +88,14 @@ function dirToString (dir: any) {
 }
 
 function getStyleBorder (style: any, isString?: boolean) {
-  const border = objAddUnit(style.borderWidth, 'px')
-  const result = objAddUnit(style, 'px')
+  const border = objAddUnit(style.borderWidth, "vw")
+  const result = objAddUnit(style, "vw")
   result.borderWidth = dirToString(border)
   return isString ? transferToStyleString(result) : result
 }
 
 function getStyleShadow (style: any, isString?: boolean) {
-  const obj = objAddUnit(style, 'px')
+  const obj = objAddUnit(style, "vw")
   const res = {
     boxShadow: `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`
   }
@@ -108,7 +111,7 @@ function getStyleBackground (style: any) {
 }
 
 function getStyleFont (style: any) {
-  const result = objAddUnit(style, 'px')
+  const result = objAddUnit(style, "vw")
   result.fontSize = result.isInherit ? 'inherit' : result.fontSize
   delete result.isInherit
   return transferToStyleString(result)
@@ -126,8 +129,8 @@ function getStyleFont (style: any) {
       case 'margin':
       case 'padding':
         isString
-          ? result += transferToStyleString(style[key], 'px')
-          : Object.assign(result, objAddUnit(style[key], 'px'))
+          ? result += transferToStyleString(style[key], "vw")
+          : Object.assign(result, objAddUnit(style[key], "vw"))
         break
       case 'font':
         result += getStyleFont(style[key])

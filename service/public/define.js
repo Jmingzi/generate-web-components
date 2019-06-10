@@ -15,7 +15,10 @@ function addUnit(val, unit) {
     if (typeof val === 'string') {
         val = val.trim();
     }
-    return unit && /^\d+$/.test(val) ? "" + val + unit : val;
+    var isVw = unit === 'vw';
+    return unit && /^\d+$/.test(val)
+        ? "" + (isVw ? val / 3.75 + "vw" : "" + val + unit)
+        : val;
 }
 function objAddUnit(obj, unit) {
     var newOj = {};
@@ -41,8 +44,8 @@ var transferToStyleString = function (obj, unit) {
 var getStyleBase = function (style, returnObj) {
     var width = style.width, isAutoWidth = style.isAutoWidth, height = style.height, isAutoHeight = style.isAutoHeight, textAlign = style.textAlign, customStyle = style.customStyle;
     var base = {
-        width: isAutoWidth ? 'auto' : width + "px",
-        height: isAutoHeight ? 'auto' : height + "px",
+        width: isAutoWidth ? 'auto' : addUnit(width, "vw"),
+        height: isAutoHeight ? 'auto' : addUnit(height, "vw"),
         textAlign: textAlign
     };
     if (returnObj) {
@@ -54,13 +57,13 @@ function dirToString(dir) {
     return Object.keys(dir).map(function (x) { return dir[x]; }).join(' ');
 }
 function getStyleBorder(style, isString) {
-    var border = objAddUnit(style.borderWidth, 'px');
-    var result = objAddUnit(style, 'px');
+    var border = objAddUnit(style.borderWidth, "vw");
+    var result = objAddUnit(style, "vw");
     result.borderWidth = dirToString(border);
     return isString ? transferToStyleString(result) : result;
 }
 function getStyleShadow(style, isString) {
-    var obj = objAddUnit(style, 'px');
+    var obj = objAddUnit(style, "vw");
     var res = {
         boxShadow: obj.hShadow + " " + obj.vShadow + " " + obj.blur + " " + obj.spread + " " + obj.color
     };
@@ -74,7 +77,7 @@ function getStyleBackground(style) {
     return background ? transferToStyleString({ background: background }) : '';
 }
 function getStyleFont(style) {
-    var result = objAddUnit(style, 'px');
+    var result = objAddUnit(style, "vw");
     result.fontSize = result.isInherit ? 'inherit' : result.fontSize;
     delete result.isInherit;
     return transferToStyleString(result);
@@ -91,8 +94,8 @@ function getStyle(style, isString, className) {
             case 'margin':
             case 'padding':
                 isString
-                    ? result += transferToStyleString(style[key], 'px')
-                    : Object.assign(result, objAddUnit(style[key], 'px'));
+                    ? result += transferToStyleString(style[key], "vw")
+                    : Object.assign(result, objAddUnit(style[key], "vw"));
                 break;
             case 'font':
                 result += getStyleFont(style[key]);
