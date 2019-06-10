@@ -8,9 +8,10 @@ export interface Component {
   type: NodeType // 1 div; 2 文本
   style: any
   activeStyle?: any
-  event: any,
-  eventCallbackHandler: (e: Event) => void,
+  event: any
+  eventCallbackHandler: (e: Event) => void
   text: string
+  imgSrc: string
 }
 export type NodeType = 1 | 2
 export type ComponentStyle = {
@@ -20,7 +21,8 @@ export type ComponentStyle = {
   font: any
   background: any
   border: any
-  boxShadow: any
+  boxShadow: any,
+  position: any
 }
 // substr end for service
 
@@ -146,10 +148,46 @@ export const schema = {
         type: 'number',
         min: 0,
         max: 1000
+      }
+    }
+  },
+  position: {
+    name: '定位位置',
+    type: 'group',
+    children: {
+      position: {
+        name: '方式',
+        type: 'select',
+        options: [
+          { label: '静态', value: 'static' },
+          { label: '相对', value: 'relative' },
+          { label: '绝对', value: 'absolute' },
+          { label: '固定', value: 'fixed' }
+        ]
       },
-      isInherit: {
-        name: '继承父级',
+      hCenter: {
+        name: '水平居中',
         type: 'checkbox'
+      },
+      vCenter: {
+        name: '垂直居中',
+        type: 'checkbox'
+      },
+      top: {
+        name: '上距离',
+        type: 'number'
+      },
+      right: {
+        name: '右距离',
+        type: 'number'
+      },
+      bottom: {
+        name: '下距离',
+        type: 'number'
+      },
+      left: {
+        name: '左距离',
+        type: 'number'
       }
     }
   },
@@ -301,29 +339,37 @@ export const schema = {
 
 export const ItemStyle = {
   base: {
-    width: 0,
+    width: undefined,
     isAutoWidth: true,
-    height: 0,
+    height: undefined,
     isAutoHeight: true,
     textAlign: 'left',
     customStyle: 'box-sizing:border-box;'
   },
   margin: {
-    marginTop: 0,
-    marginRight: 0,
-    marginBottom: 0,
-    marginLeft: 0
+    marginTop: undefined,
+    marginRight: undefined,
+    marginBottom: undefined,
+    marginLeft: undefined
   },
   padding: {
-    paddingTop: 0,
-    paddingRight: 0,
-    paddingBottom: 0,
-    paddingLeft: 0
+    paddingTop: undefined,
+    paddingRight: undefined,
+    paddingBottom: undefined,
+    paddingLeft: undefined
   },
   font: {
-    color: '#333333',
-    fontSize: 14,
-    isInherit: true
+    color: undefined,
+    fontSize: undefined
+  },
+  position: {
+    position: 'static',
+    top: undefined,
+    right: undefined,
+    bottom: undefined,
+    left: undefined,
+    hCenter: false,
+    vCenter: false
   },
   background: {
     backgroundColor: '',
@@ -335,21 +381,21 @@ export const ItemStyle = {
   border: {
     // border: 'none',
     borderWidth: {
-      borderTopWidth: 0,
-      borderRightWidth: 0,
-      borderBottomWidth: 0,
-      borderLeftWidth: 0
+      borderTopWidth: undefined,
+      borderRightWidth: undefined,
+      borderBottomWidth: undefined,
+      borderLeftWidth: undefined
     },
-    borderColor: '#333333',
-    borderStyle: 'solid',
-    borderRadius: 0
+    borderColor: undefined,
+    borderStyle: undefined,
+    borderRadius: undefined
   },
   boxShadow: {
-    hShadow: 0,
-    vShadow: 0,
-    blur: 0,
-    spread: 0,
-    color: 'rgba(0, 0, 0, .2)'
+    hShadow: undefined,
+    vShadow: undefined,
+    blur: undefined,
+    spread: undefined,
+    color: undefined
   }
 }
 
@@ -369,5 +415,6 @@ export const item: Component = {
     onClick: ''
   },
   eventCallbackHandler () {},
-  text: ''
+  text: '',
+  imgSrc: ''
 }

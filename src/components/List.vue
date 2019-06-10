@@ -86,15 +86,24 @@ export default {
     create () {
       this.$prompt('组件名称为小写短杆连接，例如 a-b', '新建组件').then((val: any) => {
         if (/^[a-z]+(-[a-z]+)+$/.test(val.value)) {
-          this.createEmpty({ type: 1, name: val.value })
+          this.createEmpty({
+            type: 1,
+            name: val.value
+          })
         } else {
           this.$message.error('名称不对呢')
         }
       })
     },
 
+    // type 1 div; 2 文本; 3 img
     appendNode (data, type) {
-      this.createEmpty({ type, parentId: data.id })
+      this.createEmpty({
+        type,
+        parentId: data.id,
+        name: data.name,
+        tagName: type === 3 ? 'img' : data.tagName
+      })
     },
 
     removeNode (component, parent) {
@@ -119,7 +128,8 @@ export default {
       // })
       const loading = this.$loading()
       const form = document.createElement('form')
-      form.action = /localhost/.test(location.host) ? 'http://localhost:3003/generate' : 'http://iming.work:3003/generate'
+      // form.action = 'http://localhost:3003/generate'
+      form.action = 'http://iming.work:3003/generate'
       form.method = 'POST'
       const input = document.createElement('input')
       input.name = 'state'

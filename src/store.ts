@@ -9,7 +9,8 @@ import {
   initComponent,
   updateNodeText,
   updateNodeEvent,
-  deleteNodes
+  deleteNodes,
+  updateNodeImgSrc
 } from './assets/js/render/index'
 import { appendRelationChild, removeRelation } from './assets/js/render/util'
 
@@ -33,8 +34,12 @@ export default new Vuex.Store<RootState>({
     }
   },
   mutations: {
-    createEmpty (state, payload: { parentId?: number, type: NodeType, name?: string }) {
-      const newData = deepCopy({ ...item, name: payload.name || item.name })
+    createEmpty (state, payload: { parentId?: number, type: NodeType, name: string, tagName: any }) {
+      const newData = deepCopy({
+        ...item,
+        name: payload.name || item.name,
+        tagName: payload.tagName || item.tagName
+      })
       initComponent(newData, !payload.parentId, payload.type)
       state.components.push(newData)
 
@@ -67,6 +72,7 @@ export default new Vuex.Store<RootState>({
       if (root) {
         updateStyle(root, payload)
       }
+      state.currentComponent = payload
     },
     setCurrent (state, payload) {
       state.currentComponent = state.components.find(x => x.id === payload.id)
@@ -78,6 +84,10 @@ export default new Vuex.Store<RootState>({
     updateNodeEvent (state, val) {
       const root = state.components.find(x => x.root)
       updateNodeEvent(root as Component, state.currentComponent as Component, val)
+    },
+    updateNodeImgSrc (state, val) {
+      const root = state.components.find(x => x.root)
+      updateNodeImgSrc(root as Component, state.currentComponent as Component, val)
     },
     deleteComponent (state, payload) {
       const { component, parent } = payload

@@ -21,6 +21,7 @@
             @change="updateComponent"
             @updateNodeText="updateNodeText"
             @updateNodeEvent="updateNodeEvent"
+            @updateNodeImgSrc="updateNodeImgSrc"
             class="height-100"
           />
         </el-col>
@@ -61,7 +62,7 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapMutations(['updateComponent', 'updateNodeText', 'updateNodeEvent'])
+    ...mapMutations(['updateComponent', 'updateNodeText', 'updateNodeEvent', 'updateNodeImgSrc'])
   }
 })
 </script>

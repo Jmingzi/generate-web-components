@@ -133,7 +133,7 @@ export default Vue.extend<Init>({
     renderSelect (schema: any, field: string, path: string) {
       const data = this.getData(path)
       return (
-        <div class="config__item">
+        <div class={`config__item ${field}`}>
           <p>{schema.name}</p>
           <el-select vModel={data[field]}>
             {
@@ -174,14 +174,15 @@ export default Vue.extend<Init>({
       )
     },
 
-    renderUpload (schema: any, field: string, path: string) {
+    renderUpload (schema: any, field: string, path: string, cb: any) {
       const obj = this.getData(path)
       return (
-        <div class="config__item">
+        <div class={`config__item ${field}`}>
           <p>{schema.name}</p>
           <el-input
             type='text'
-            vModel={obj[field]}
+            value={obj[field]}
+            onInput={val => { obj[field] = val; cb(val) }}
             placeholder="链接地址"
           />
         </div>
@@ -190,33 +191,6 @@ export default Vue.extend<Init>({
 
     renderUnknow (schema: any, field: string, path: string) {
     },
-
-    renderInnerText () {
-      return (
-        <div class="config__group">
-          <p
-            class="config__group--title"
-            onClick={() => { this.$set(this.collapse, 'text', !this.collapse.text) }}
-          >
-            <span>文本项</span>
-            <i class={this.collapse.text ? 'el-icon-caret-bottom' : 'el-icon-caret-right'} />
-          </p>
-          <el-collapse-transition>
-            <div
-              vShow={this.collapse.text}
-              class="config__group--item"
-            >
-              {this.renderInput({ name: '文本内容' }, 'text', 'details', 'textarea', val => { this.$emit('updateNodeText', val) })}
-            </div>
-          </el-collapse-transition>
-        </div>
-      )
-    },
-
-    // renderEvent (schema) {
-    //   // return this.renderGroupContainer(schema.event.name, '')
-    //   return this.renderGroup(schema, 'event', 'details')
-    // },
 
     renderEventScript (schema: any, field: string, path: string) {
       const obj = this.getData(path)
@@ -234,6 +208,26 @@ export default Vue.extend<Init>({
       )
     },
 
+    renderImgSrc () {
+      return this.renderGroupContainer('图片项', 'imgSrc', () =>
+        this.renderUpload({ name: '图片链接' }, 'imgSrc', 'details', (val: string) => {
+          this.$emit('updateNodeImgSrc', val)
+        })
+      )
+    },
+
+    renderInnerText () {
+      return this.renderGroupContainer('文本项', 'text', () =>
+        this.renderInput(
+          { name: '文本内容' },
+          'text',
+          'details',
+          'textarea',
+          val => { this.$emit('updateNodeText', val) }
+        )
+      )
+    },
+
     renderGroupContainer (name, field, cb) {
       return (
         <div class="config__group">
@@ -247,7 +241,7 @@ export default Vue.extend<Init>({
           <el-collapse-transition>
             <div
               vShow={this.collapse[field]}
-              class="config__group--item"
+              class={`config__group--item`}
             >
               {cb()}
             </div>
@@ -270,6 +264,7 @@ export default Vue.extend<Init>({
         <p>组件配置</p>
         {this.renderConfig(schema, 'details.style')}
         {type === 2 && this.renderInnerText()}
+        {type === 3 && this.renderImgSrc()}
         {this.renderGroup(schema.event, 'event', 'details')}
       </div>
     )
@@ -289,6 +284,8 @@ export default Vue.extend<Init>({
       color #999
     &--textarea
     &.script
+    &.imgSrc
+    &.position
       width 100%
   &__group
     width 100%

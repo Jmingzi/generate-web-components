@@ -7,7 +7,7 @@ function addUnit (val: any, unit?: 'px' | 'vw') {
     val = val.trim()
   }
   const isVw = unit === 'vw'
-  return unit && /^\d+$/.test(val)
+  return unit && /^\d+$/.test(val) && +val !== 0
     ? `${isVw ? `${val / 3.75}vw` : `${val}${unit}`}`
     : val
 }
@@ -20,6 +20,10 @@ function objAddUnit (obj: any, unit?: 'px' | 'vw') {
   return newOj
 }
 
+function isDef (val: any) {
+  return val !== undefined && val !== null && val !== ''
+}
+
 export const transferToStyleObject = (
   str: string,
   unit?: 'px' | 'vw'
@@ -30,7 +34,9 @@ export const transferToStyleObject = (
   const result: { [key: string]: string } = {}
   str.split(';').filter(Boolean).forEach(item => {
     const one = item.split(':')
-    result[toCamel(one[0].trim())] = addUnit(one[1], unit)
+    if (isDef(one[1].trim())) {
+      result[toCamel(one[0].trim())] = addUnit(one[1], unit)
+    }
   })
   return result
 }
@@ -39,7 +45,9 @@ export const transferToStyleString = (
   obj: { [key: string]: string },
   unit?: 'px' | 'vw'
 ): string => {
-  return Object.keys(obj).reduce((result, key) => result + `${toLowerLine(key)}:${addUnit(obj[key], unit)};`, '')
+  return Object.keys(obj).reduce((result, key) => {
+    return isDef(obj[key]) ? (result + `${toLowerLine(key)}:${addUnit(obj[key], unit)};`) : result
+  }, '')
 }
 
 export const getStyleBase = (style: any, returnObj?: boolean): any => {
@@ -66,19 +74,19 @@ function dirToString (dir: any) {
   return Object.keys(dir).map(x => dir[x]).join(' ')
 }
 
-function getStyleBorder (style: any, isString?: boolean) {
+function getStyleBorder (style: any) {
   const border = objAddUnit(style.borderWidth, 'px')
   const result = objAddUnit(style, 'px')
   result.borderWidth = dirToString(border)
-  return isString ? transferToStyleString(result) : result
+  return isDef(result.borderWidth.trim()) ? transferToStyleString(result) : ''
 }
 
-function getStyleShadow (style: any, isString?: boolean) {
+function getStyleShadow (style: any) {
   const obj = objAddUnit(style, 'px')
   const res = {
     boxShadow: `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`
   }
-  return transferToStyleString(res)
+  return obj.blur ? transferToStyleString(res) : ''
 }
 
 function getStyleBackground (style: any) {
@@ -89,11 +97,34 @@ function getStyleBackground (style: any) {
   return background ? transferToStyleString({ background }) : ''
 }
 
-function getStyleFont (style: any) {
+// function getStyleFont (style: any) {
+//   const result = objAddUnit(style, 'px')
+//   // result.fontSize = result.isInherit ? 'inherit' : result.fontSize
+//   // delete result.isInherit
+//   return transferToStyleString(result)
+// }
+
+function getStylePosition (style: any) {
   const result = objAddUnit(style, 'px')
-  result.fontSize = result.isInherit ? 'inherit' : result.fontSize
-  delete result.isInherit
-  return transferToStyleString(result)
+  const isStatic = result.position === 'static'
+  if (result.hCenter && result.vCenter) {
+    result.left = '50%'
+    result.top = '50%'
+    result.bottom = ''
+    result.right = ''
+    result.transform = `translate(-50%, -50%)`
+  } else if (result.hCenter) {
+    result.left = '50%'
+    result.right = ''
+    result.transform = `translateX(-50%)`
+  } else if (result.vCenter) {
+    result.top = '50%'
+    result.bottom = ''
+    result.transform = `translateY(-50%)`
+  }
+  delete result.hCenter
+  delete result.vCenter
+  return isStatic ? '' : transferToStyleString(result)
 }
 
 export function getStyle (style: ComponentStyle, isString?: boolean, className?: string) {
@@ -105,19 +136,20 @@ export function getStyle (style: ComponentStyle, isString?: boolean, className?:
         break
       case 'margin':
       case 'padding':
+      case 'font':
         result += transferToStyleString(style[key], 'px')
         break
-      case 'font':
-        result += getStyleFont(style[key])
-        break
       case 'border':
-        result += getStyleBorder(style[key], isString)
+        result += getStyleBorder(style[key])
         break
       case 'boxShadow':
-        result += getStyleShadow(style[key], true)
+        result += getStyleShadow(style[key])
         break
       case 'background':
         result += getStyleBackground(style[key])
+        break
+      case 'position':
+        result += getStylePosition(style[key])
         break
     }
   })

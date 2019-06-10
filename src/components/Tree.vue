@@ -12,9 +12,10 @@
       >
         <i class="el-icon-caret-bottom" />
         <span>{{ item.root ? '根结点' : `子节点${item.className.substr(-2)}` }}</span>
-        <template v-if="item.type !== 2">
+        <template v-if="item.type === 1">
           <el-button type="text" @click.stop="$emit('append', item, 1)">添加块</el-button>
           <el-button type="text" @click.stop="$emit('append', item, 2)">添加文本</el-button>
+          <el-button type="text" @click.stop="$emit('append', item, 3)">添加图片</el-button>
         </template>
         <template
           v-if="!item.root"

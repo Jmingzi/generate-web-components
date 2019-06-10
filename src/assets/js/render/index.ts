@@ -25,18 +25,26 @@ export const updateStyle = (rootData: Component, updateData: Component) => {
 }
 
 // substr start for service
-function addSpecial (component: any, div: any) {
+function addSpecial (component: any, div: any, noEvent?: boolean) {
   // 文本
   if (component.type === 2) {
-    // div.innerText = component.text
     div.innerHTML = component.text
+  } else if (component.type === 3 && component.imgSrc) {
+    const img = document.createElement('img')
+    img.setAttribute('width', '100%')
+    img.setAttribute('height', '100%')
+    img.src = component.imgSrc
+    div.style.fontSize = 0
+    div.appendChild(img)
   }
-  // 事件句柄，便于 remove
-  component.eventCallbackHandler = (e: Event) => {
-    e.stopPropagation()
-    new Function('e', component.event.onClick)(e)
+  if (!noEvent) {
+    // 事件句柄，便于 remove
+    component.eventCallbackHandler = (e: Event) => {
+      e.stopPropagation()
+      new Function('e', component.event.onClick)(e)
+    }
+    div.addEventListener('click', component.eventCallbackHandler)
   }
-  div.addEventListener('click', component.eventCallbackHandler)
 }
 
 export type ComponentRelationShipItem = {
@@ -105,7 +113,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
       // add active style
       const style = document.createElement('style')
       style.className = 'active'
-      style.textContent = `.active {\n border: 1px blue dashed;overflow:hidden; \n}`
+      style.textContent = `.active {\n border: 1px blue dashed !important;overflow:hidden; \n}`
       this.shadowRoot && this.shadowRoot.appendChild(style)
 
       queen.add(root.id, {
@@ -197,7 +205,11 @@ export const create = (
 }
 
 export function updateNodeText (root: Component, component: Component, text: string) {
-  query(component.className, queen.getEl(root).shadowRoot, 'div').innerText = text
+  addSpecial(
+    { ...component, text },
+    query(component.className, queen.getEl(root).shadowRoot, 'div'),
+    true
+  )
 }
 
 export function updateNodeEvent (root: Component, component: Component, script: string) {
@@ -208,6 +220,16 @@ export function updateNodeEvent (root: Component, component: Component, script: 
     new Function('e', script)(e)
   }
   div.addEventListener('click', component.eventCallbackHandler)
+}
+
+export function updateNodeImgSrc (root: Component, component: Component, src: string) {
+  const div = query(component.className, queen.getEl(root).shadowRoot, 'div')
+  if (!div.childNodes.length) {
+    addSpecial({ ...component, imgSrc: src }, div, true)
+  } else {
+    const img = div.childNodes[0]
+    img.src = src
+  }
 }
 
 export function deleteNodes (root: Component, spreadChildren: Array<Component>) {
