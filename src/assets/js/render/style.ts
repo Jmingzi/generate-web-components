@@ -6,7 +6,10 @@ function addUnit (val: any, unit?: 'px' | 'vw') {
   if (typeof val === 'string') {
     val = val.trim()
   }
-  return unit && /^\d+$/.test(val) ? `${val}${unit}` : val
+  const isVw = unit === 'vw'
+  return unit && /^\d+$/.test(val)
+    ? `${isVw ? `${val / 3.75}vw` : `${val}${unit}`}`
+    : val
 }
 
 function objAddUnit (obj: any, unit?: 'px' | 'vw') {
@@ -49,8 +52,8 @@ export const getStyleBase = (style: any, returnObj?: boolean): any => {
     customStyle
   } = style
   const base = {
-    width: isAutoWidth ? 'auto' : `${width}px`,
-    height: isAutoHeight ? 'auto' : `${height}px`,
+    width: isAutoWidth ? 'auto' : addUnit(width, 'px'),
+    height: isAutoHeight ? 'auto' : addUnit(height, 'px'),
     textAlign: textAlign
   }
   if (returnObj) {
