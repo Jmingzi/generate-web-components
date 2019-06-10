@@ -43,7 +43,7 @@ app.post('/generate', function (req, res) {
     })
     fs.writeFileSync(commonPath, script, 'utf8')
     // 替换 export
-    script = script.replace(/export/g, '')
+    script = script.replace(/exports\./g, 'var ')
     // 处理单位
     script = script.replace(/'px'/g, 'vw')
     try {
