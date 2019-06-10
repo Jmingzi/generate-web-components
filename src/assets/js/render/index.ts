@@ -70,7 +70,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
       const rootDiv = document.createElement('div')
       if (relationShip) {
         let parent =[rootDiv]
-        let oldParent
+        // let oldParent
         const _createChild = (relation?: ComponentRelationShip) => {
           (relation || []).forEach((item: ComponentRelationShipItem) => {
             const component = components.find((x: Component) => x.id === item.id) || components[0]
