@@ -85,7 +85,7 @@ export default {
 
     create () {
       this.$prompt('组件名称为小写短杆连接，例如 a-b', '新建组件').then((val: any) => {
-        if (/^[a-z]+(-[a-z])+$/.test(val.value)) {
+        if (/^[a-z]+(-[a-z]+)+$/.test(val.value)) {
           this.createEmpty({ type: 1, name: val.value })
         } else {
           this.$message.error('名称不对呢')
