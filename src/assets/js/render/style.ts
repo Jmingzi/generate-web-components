@@ -78,7 +78,7 @@ function getStyleShadow (style: any, isString?: boolean) {
   const res = {
     boxShadow: `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`
   }
-  return isString ? transferToStyleString(res) : res
+  return transferToStyleString(res)
 }
 
 function getStyleBackground (style: any) {
@@ -101,34 +101,26 @@ export function getStyle (style: ComponentStyle, isString?: boolean, className?:
   Object.keys(style).forEach(key => {
     switch (key) {
       case 'base':
-        isString
-          ? result += getStyleBase(style[key])
-          : Object.assign(result, getStyleBase(style[key], true))
+        result += getStyleBase(style[key])
         break
       case 'margin':
       case 'padding':
-        isString
-          ? result += transferToStyleString(style[key], 'px')
-          : Object.assign(result, objAddUnit(style[key], 'px'))
+        result += transferToStyleString(style[key], 'px')
         break
       case 'font':
         result += getStyleFont(style[key])
         break
       case 'border':
-        isString
-          ? result += getStyleBorder(style[key], isString)
-          : Object.assign(result, getStyleBorder(style[key], isString))
+        result += getStyleBorder(style[key], isString)
         break
       case 'boxShadow':
-        isString
-          ? result += <string>getStyleShadow(style[key], true)
-          : Object.assign(result, getStyleShadow(style[key], ))
+        result += getStyleShadow(style[key], true)
         break
       case 'background':
         result += getStyleBackground(style[key])
         break
     }
   })
-  return isString ? result + `\n}` : result
+  return result + `\n}`
 }
 // substr end for service

@@ -33,8 +33,8 @@ export default new Vuex.Store<RootState>({
     }
   },
   mutations: {
-    createEmpty (state, payload: { parentId?: number, type: NodeType }) {
-      const newData = deepCopy(item)
+    createEmpty (state, payload: { parentId?: number, type: NodeType, name?: string }) {
+      const newData = deepCopy({ ...item, name: payload.name || item.name })
       initComponent(newData, !payload.parentId, payload.type)
       state.components.push(newData)
 

@@ -28,7 +28,8 @@ export const updateStyle = (rootData: Component, updateData: Component) => {
 function addSpecial (component: any, div: any) {
   // 文本
   if (component.type === 2) {
-    div.innerText = component.text
+    // div.innerText = component.text
+    div.innerHTML = component.text
   }
   // 事件句柄，便于 remove
   component.eventCallbackHandler = (e: Event) => {

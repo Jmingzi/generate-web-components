@@ -8,6 +8,16 @@ const { execSync, exec } = require('child_process')
 // app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
+app.get('/del', function (req, res) {
+  const root = path.resolve(__dirname, 'public')
+  try {
+    execSync(`rm -rf ${path.resolve(root, 'define.js')} ${path.resolve(root, 'define.ts')}`)
+    res.send(`rm -rf ${path.resolve(root, 'define.js')} ${path.resolve(root, 'define.ts')} 成功`)
+  } catch (e) {
+    res.send(e.message)
+  }
+})
+
 app.post('/generate', function (req, res) {
   const state = JSON.parse(req.body.state)
   const fileName = `${state.components[0].name}.ts`

@@ -3,7 +3,7 @@
     <template v-if="components.length === 0">
       <el-button
         type="primary"
-        @click="() => createEmpty({ type: 1 })"
+        @click="create"
       >
         新建空白组件
       </el-button>
@@ -82,6 +82,16 @@ export default {
 
   methods: {
     ...mapMutations(['createEmpty', 'createCopy', 'deleteComponent']),
+
+    create () {
+      this.$prompt('组件名称为小写短杆连接，例如 a-b', '新建组件').then((val: any) => {
+        if (/^[a-z]+(-[a-z])+$/.test(val.value)) {
+          this.createEmpty({ type: 1, name: val.value })
+        } else {
+          this.$message.error('名称不对呢')
+        }
+      })
+    },
 
     appendNode (data, type) {
       this.createEmpty({ type, parentId: data.id })
