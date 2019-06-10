@@ -47,17 +47,20 @@ export function recursionFind (relation: any, pid: number) {
 
 export function recursionFindPath (relation: any, id: number) {
   const path: Array<number> = []
-  let flag = false
+  // let flag = false
   const _find = (x: any) => {
     for (let i = 0; i < x.length; i++) {
       if (x[i].id === id) {
-        flag = true
+        // flag = true
         path.push(i)
-        break
+        return true
       } else {
         path.push(i)
-        _find(x[i].children)
-        if (!flag) {
+        // _find(x[i].children)
+        // if (flag) {
+        if (_find(x[i].children)) {
+          return true
+        } else {
           path.pop()
         }
       }

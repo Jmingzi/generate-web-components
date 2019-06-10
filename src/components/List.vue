@@ -41,10 +41,12 @@
 
 <script lang="tsx">
 import { mapState, mapMutations } from 'vuex'
-import axios from 'axios'
+// import axios from 'axios'
 import Tree from '../components/Tree'
 import { recursionRelation } from '../assets/js/render/util'
 import { create } from '../assets/js/render'
+import { completeField } from '../assets/js/util'
+import { item } from '../assets/js/item'
 
 export default {
   name: 'List',
@@ -148,6 +150,12 @@ export default {
     replaceState () {
       const local = JSON.parse(localStorage.local)
       if (local) {
+        // 补全 undefined
+        local.components = local.components.map(one => {
+          completeField(one, item)
+          return one
+        })
+
         create(null, local.components, local.relationShip, 2)
         this.$store.replaceState(local)
         this.$nextTick(() => {

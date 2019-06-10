@@ -69,7 +69,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
       const shadow = this.attachShadow({ mode: 'open' })
       const rootDiv = document.createElement('div')
       if (relationShip) {
-        let parent = rootDiv
+        let parent =[rootDiv]
         let oldParent
         const _createChild = (relation?: ComponentRelationShip) => {
           (relation || []).forEach((item: ComponentRelationShipItem) => {
@@ -83,13 +83,16 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
             addSpecial(component, div)
             style.className = component.className
             style.textContent = <string>getStyle(component.style, true, component.className)
-            parent.appendChild(div)
+            parent[parent.length - 1].appendChild(div)
+            // console.log(parent.className)
             shadow.appendChild(style)
-            oldParent = parent
-            parent = div
+            // oldParent = parent
+            // parent = div
+            parent.push(div)
             _createChild(item.children)
             // 回退
-            parent = oldParent
+            // parent = oldParent
+            parent.pop()
           })
         }
         _createChild(relationShip)
@@ -153,6 +156,7 @@ function createRootChild (
   // root
   const rootElem = query(rootData.className, shadow, 'div')
   const path = recursionFindPath(relation, updateData.id)
+  console.log(path)
   // 去除 root 的索引
   path.shift()
   let currentElem = rootElem

@@ -77,8 +77,8 @@ function dirToString (dir: any) {
 function getStyleBorder (style: any) {
   const border = objAddUnit(style.borderWidth, 'px')
   const result = objAddUnit(style, 'px')
-  result.borderWidth = dirToString(border)
-  return isDef(result.borderWidth.trim()) ? transferToStyleString(result) : ''
+  result.borderWidth = isDef(dirToString(border).trim()) ? dirToString(border) : 0
+  return transferToStyleString(result)
 }
 
 function getStyleShadow (style: any) {

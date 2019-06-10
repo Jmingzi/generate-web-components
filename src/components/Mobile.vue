@@ -45,8 +45,10 @@ export default Vue.extend({
   justify-content center
   align-items center
   &__mobile
-    width 320px
-    height 480px
+    width 375px
+    height calc(100vh - 200px)
     border 1px #ccc solid
     background-color #fff
+    overflow: hidden
+    transform translate(0)
 </style>
