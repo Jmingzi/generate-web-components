@@ -209,6 +209,14 @@ export function updateRootPropsRelation (root: any) {
   const el = queen.getEl(root)
   el && el.setAttribute(PROPS_RELATION, root.propsRelation)
 }
+
+function loadComponents (nameArr: any, path: any) {
+  (nameArr || []).forEach((name: any) => {
+    const script = document.createElement('script')
+    script.src =  `${path + name}.js?v=${location.search.match(/v=(\d+)/) || Date.now()}`
+    document.head.appendChild(script)
+  })
+}
 // substr end for service
 
 function createRoot (newData: Component, components: Array<Component>) {
