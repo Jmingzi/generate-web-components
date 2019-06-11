@@ -172,6 +172,7 @@ app.get('/generate/file', async function (req, res) {
     content = fs.readFileSync(file, 'utf8')
   } catch (e) {
     const dirs = fs.readdirSync(path.resolve(__dirname, './public'), 'utf8')
+      .map(x => /ts$/.test(x) || /define/.test(x) ? undefined : x).filter(Boolean)
     res.status(500).send(`${filename} 不存在，已知列表： ${dirs.join(',')}`)
     return
   }
