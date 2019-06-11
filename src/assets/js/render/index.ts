@@ -61,13 +61,23 @@ window.HTMLElement = function HTMLElement() {
 HTMLElement.prototype = BuiltInHTMLElement.prototype
 HTMLElement.prototype.constructor = HTMLElement
 Object.setPrototypeOf(HTMLElement, BuiltInHTMLElement)
+const PROPS_RELATION = 'props-relation'
+
 function defineElem (components: Array<Component>, relationShip?: ComponentRelationShip) {
   const root: Component = components.find(x => x.root) || components[0]
   customElements.define(root.name as string, class Custom extends HTMLElement {
+    static get observedAttributes() {
+      return root.props ? root.props.split(',') :  []
+    }
+
+    propsRelation:any = []
+
     constructor () {
       super()
+
       const shadow = this.attachShadow({ mode: 'open' })
       const rootDiv = document.createElement('div')
+
       if (relationShip) {
         let parent =[rootDiv]
         // let oldParent
@@ -111,7 +121,10 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         shadow.appendChild(style)
         shadow.appendChild(rootDiv)
       }
+
+      this.setPropsRelation(this.getAttribute(PROPS_RELATION) || '')
     }
+
     connectedCallback () {
       // add active style
       const style = document.createElement('style')
@@ -126,16 +139,78 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         // data: root
       })
     }
+
     adoptedCallback () {
       console.log('adoptedCallback')
     }
+
     disconnectedCallback () {
       console.log('disconnectedCallback')
     }
+
     attributeChangedCallback (name: string, oldValue: string, newValue: string) {
-      console.log(name, oldValue, newValue)
+      console.log(name, newValue, oldValue)
+      // 获取props映射关系
+      if (name === PROPS_RELATION) {
+        // id-props,id-props 例如：
+        // <demo-tag props-relation="1-imgSrc,2-text" imgSrc="" text="" />
+        this.setPropsRelation(newValue)
+      }
+      if (this.propsRelation.length) {
+        const item = this.propsRelation.find((x: any) => x.name === name)
+        if (item) {
+          const component = components.find((x: any) => Number(x.id) === Number(item.id))
+          if (component) {
+            const handle = component.type === 2 ? updateNodeText : component.type === 3 ? updateNodeImgSrc : undefined
+            handle && handle(root, component, newValue)
+          }
+        }
+      }
+    }
+    setPropsRelation (value: string) {
+      const propsItem = value.split(',')
+      this.propsRelation = propsItem.map((x: string) => {
+        const item = x.split('-')
+        return {
+          id: item[0],
+          name: item[1]
+        }
+      })
     }
   })
+}
+
+export function updateNodeText (root: Component, component: Component, text: string) {
+  addSpecial(
+    { ...component, text },
+    query(component.className, queen.getEl(root).shadowRoot, 'div'),
+    true
+  )
+}
+
+export function updateNodeEvent (root: Component, component: Component, script: string) {
+  const div = query(component.className, queen.getEl(root).shadowRoot, 'div')
+  component.eventCallbackHandler && div.removeEventListener('click', component.eventCallbackHandler)
+  component.eventCallbackHandler = (e: Event) => {
+    e.stopPropagation()
+    new Function('e', script)(e)
+  }
+  div.addEventListener('click', component.eventCallbackHandler)
+}
+
+export function updateNodeImgSrc (root: Component, component: Component, src: string) {
+  const div = query(component.className, queen.getEl(root).shadowRoot, 'div')
+  if (!div.childNodes.length) {
+    addSpecial({ ...component, imgSrc: src }, div, true)
+  } else {
+    const img = div.childNodes[0]
+    img.src = src
+  }
+}
+
+export function updateRootPropsRelation (root: any) {
+  const el = queen.getEl(root)
+  el && el.setAttribute(PROPS_RELATION, root.propsRelation)
 }
 // substr end for service
 
@@ -205,34 +280,6 @@ export const create = (
       break
     default:
       console.log('no create way')
-  }
-}
-
-export function updateNodeText (root: Component, component: Component, text: string) {
-  addSpecial(
-    { ...component, text },
-    query(component.className, queen.getEl(root).shadowRoot, 'div'),
-    true
-  )
-}
-
-export function updateNodeEvent (root: Component, component: Component, script: string) {
-  const div = query(component.className, queen.getEl(root).shadowRoot, 'div')
-  component.eventCallbackHandler && div.removeEventListener('click', component.eventCallbackHandler)
-  component.eventCallbackHandler = (e: Event) => {
-    e.stopPropagation()
-    new Function('e', script)(e)
-  }
-  div.addEventListener('click', component.eventCallbackHandler)
-}
-
-export function updateNodeImgSrc (root: Component, component: Component, src: string) {
-  const div = query(component.className, queen.getEl(root).shadowRoot, 'div')
-  if (!div.childNodes.length) {
-    addSpecial({ ...component, imgSrc: src }, div, true)
-  } else {
-    const img = div.childNodes[0]
-    img.src = src
   }
 }
 

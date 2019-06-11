@@ -232,11 +232,11 @@ export default Vue.extend<Init>({
       return (
         <div class="config__group">
           <p
-            class="config__group--title"
+            class="config__group--title flex-center-between"
             onClick={() => { this.$set(this.collapse, field, !this.collapse[field]) }}
           >
-            <span>{name}</span>
-            <i class={this.collapse[field] ? 'el-icon-caret-bottom' : 'el-icon-caret-right'} />
+            <span>{name} <i class={this.collapse[field] ? 'el-icon-caret-bottom' : 'el-icon-caret-right'}/></span>
+            <el-button type="text" onClick={(e) => { e.stopPropagation(); this.$emit('setProps', field) }}>设置组件props</el-button>
           </p>
           <el-collapse-transition>
             <div

@@ -10,7 +10,8 @@ import {
   updateNodeText,
   updateNodeEvent,
   deleteNodes,
-  updateNodeImgSrc
+  updateNodeImgSrc,
+  updateRootPropsRelation
 } from './assets/js/render/index'
 import { appendRelationChild, removeRelation } from './assets/js/render/util'
 
@@ -34,11 +35,14 @@ export default new Vuex.Store<RootState>({
     }
   },
   mutations: {
-    createEmpty (state, payload: { parentId?: number, type: NodeType, name: string, tagName: any }) {
+    createEmpty (state, payload: {
+      parentId?: number, type: NodeType, name: string, tagName: any, props: string
+    }) {
       const newData = deepCopy({
         ...item,
         name: payload.name || item.name,
-        tagName: payload.tagName || item.tagName
+        tagName: payload.tagName || item.tagName,
+        props: payload.props || item.props
       })
       initComponent(newData, !payload.parentId, payload.type)
       state.components.push(newData)
@@ -105,6 +109,23 @@ export default new Vuex.Store<RootState>({
         state.components = []
         state.relationShip = []
       }
+    },
+    setProps (state, { id, name }) {
+      const root: any = state.components.find(x => x.root)
+      const relation = root && root.propsRelation
+      const item = `${id}-${name}`
+      if (relation) {
+        const exist = relation.indexOf(item)
+        if (exist === -1) {
+          root.propsRelation += `,${item}`
+        } else {
+          Vue.prototype.$message.error('该属性已被绑定，此设置无效')
+        }
+      } else {
+        root.propsRelation =item
+      }
+      // 更新 root 的 props-relation
+      updateRootPropsRelation(root)
     }
   },
   actions: {

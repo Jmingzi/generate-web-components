@@ -5,8 +5,8 @@
     </el-header>
     <el-main class="main">
       <el-row class="height-100">
-        <el-col :span="8" class="p10">
-          <list />
+        <el-col :span="8" class="p10 height-100">
+          <list class="height-100" />
         </el-col>
         <el-col :span="8" class="height-100">
           <mobile
@@ -22,6 +22,7 @@
             @updateNodeText="updateNodeText"
             @updateNodeEvent="updateNodeEvent"
             @updateNodeImgSrc="updateNodeImgSrc"
+            @setProps="setRootProps"
             class="height-100"
           />
         </el-col>
@@ -38,7 +39,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 import Mobile from '../components/Mobile.vue'
 import Config from '../components/Config.vue'
 import List from '../components/List.vue'
@@ -58,11 +59,41 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(['currentComponent'])
+    ...mapState(['currentComponent']),
+    ...mapGetters(['root'])
   },
 
   methods: {
-    ...mapMutations(['updateComponent', 'updateNodeText', 'updateNodeEvent', 'updateNodeImgSrc'])
+    ...mapMutations(['updateComponent', 'updateNodeText', 'updateNodeEvent', 'updateNodeImgSrc', 'setProps']),
+
+    setRootProps () {
+      const h = this.$createElement
+      const props = this.root.props.split(',')
+      this.$msgbox({
+        title: '选择props',
+        message: h('el-select', {
+          props: {
+            value: ''
+          },
+          on: {
+            change: (val: any) => {
+              this.setProps({
+                name: val,
+                id: this.currentComponent.id
+              })
+              this.$msgbox.close()
+            }
+          }
+        }, props.slice(1).map((name: string) => {
+          return h('el-option', {
+            props: {
+              label: name,
+              value: name
+            }
+          })
+        }))
+      })
+    }
   }
 })
 </script>

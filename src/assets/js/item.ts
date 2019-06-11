@@ -1,7 +1,16 @@
 // substr start for service
+// export type BindProps = {
+//   bind: boolean
+//   name: string
+//   componentId: number
+//   field: string
+// }
+
 export interface Component {
   id: number
   name?: string
+  props: string,
+  propsRelation?: string
   root: boolean
   className: string
   tagName: 'div'
@@ -13,7 +22,7 @@ export interface Component {
   text: string
   imgSrc: string
 }
-export type NodeType = 1 | 2
+export type NodeType = 1 | 2 | 3
 export type ComponentStyle = {
   base: any
   margin: any
@@ -416,5 +425,7 @@ export const item: Component = {
   },
   eventCallbackHandler () {},
   text: '',
-  imgSrc: ''
+  imgSrc: '',
+  props: '',  // 'props-relation,你自己的定义的名称'
+  propsRelation: undefined  // 'id-你自己的定义的名称'，组件与属性的关系映射
 }

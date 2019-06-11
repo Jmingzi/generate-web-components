@@ -28,7 +28,7 @@
         生成js文件
       </el-button>
     </template>
-    <p class="mtb10 bg-f2 p10 f14">节点树</p>
+    <p class="mtb10 bg-f2 p10 f14">节点树 {{ root ? `<${root.name} />` : '' }}</p>
     <tree
       ref="tree"
       :list="nodeTree"
@@ -36,11 +36,16 @@
       @remove="removeNode"
       @copy="copy"
     />
+
+    <div class="code">
+      <p>使用演示</p>
+      <pre v-text="demoCode" />
+    </div>
   </div>
 </template>
 
 <script lang="tsx">
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 // import axios from 'axios'
 import Tree from '../components/Tree'
 import { recursionRelation } from '../assets/js/render/util'
@@ -61,12 +66,14 @@ export default {
       defaultProps: {
         label: 'className',
         children: 'children'
-      }
+      },
+      demoCode: ''
     }
   },
 
   computed: {
-    ...mapState(['relationShip', 'components'])
+    ...mapState(['relationShip', 'components']),
+    ...mapGetters(['root'])
   },
 
   watch: {
@@ -74,6 +81,23 @@ export default {
       deep: true,
       handler (val) {
         this.nodeTree = recursionRelation(val, this.components)
+      },
+      immediate: true
+    },
+
+    root: {
+      deep: true,
+      handler (val) {
+        if (val) {
+          this.demoCode = `<${val.name} `
+          if (val.props) {
+            const arr = val.props.split(',')
+            this.demoCode += arr.length ? arr.slice(1).reduce((sum, item) => sum + `\n  ${item}=""`, '') : ''
+            this.demoCode += `\n`
+          }
+          this.demoCode += `  propsRelation="${val.propsRelation || ''}"\n`
+          this.demoCode += `/>`
+        }
       },
       immediate: true
     }
@@ -88,9 +112,16 @@ export default {
     create () {
       this.$prompt('组件名称为小写短杆连接，例如 a-b', '新建组件').then((val: any) => {
         if (/^[a-z]+(-[a-z]+)+$/.test(val.value)) {
-          this.createEmpty({
-            type: 1,
-            name: val.value
+          this.$prompt('为你的组件添加自定义属性列表，多个英文逗号分隔', '添加属性').then((props: any) => {
+            if (/^[a-z][a-zA-Z,]*[a-zA-Z]$/.test(props.value)) {
+              this.createEmpty({
+                type: 1,
+                name: val.value,
+                props: `props-relation,${props.value}`
+              })
+            } else {
+              this.$message.error('属性不对呢')
+            }
           })
         } else {
           this.$message.error('名称不对呢')
@@ -168,4 +199,17 @@ export default {
 </script>
 
 <style lang="stylus">
+.list
+  position relative
+.code
+  position absolute
+  width 100%
+  bottom 0
+  left 0
+  height 200px
+  padding 0 10px
+  pre
+    width 100%
+    padding 10px
+    background-color #f2f2f2
 </style>
