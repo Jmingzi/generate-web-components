@@ -1,6 +1,6 @@
 <script lang="tsx">
 import Vue from 'vue'
-// import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 // import { getId } from '../assets/js/render/index'
 
 import { Component } from '../assets/js/item'
@@ -9,13 +9,11 @@ export default Vue.extend({
   name: 'Mobile',
 
   props: {
-    componentData: {
-      type: Object
-    }
   },
 
   computed: {
     // ...mapState(['currentComponent'])
+    ...mapGetters(['root'])
   },
 
   created () {
@@ -31,7 +29,7 @@ export default Vue.extend({
     return (
       <div class="preview">
         <div class="preview__mobile">
-          { this.componentData && this.renderComponent(this.componentData) }
+          { this.root && this.renderComponent(this.root) }
         </div>
       </div>
     )

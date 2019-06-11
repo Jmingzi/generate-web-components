@@ -7,7 +7,7 @@
     >
       <div
         class="tree__item"
-        :class="{ 'bg-f2': currentComponent.id === item.id }"
+        :class="{ 'bg-f2': currentComponent && currentComponent.id === item.id }"
         @click="setCurr(item)"
       >
         <i class="el-icon-caret-bottom" />

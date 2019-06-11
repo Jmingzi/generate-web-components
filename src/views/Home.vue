@@ -10,7 +10,6 @@
         </el-col>
         <el-col :span="8" class="height-100">
           <mobile
-            :component-data="currentComponent"
             class="bg-f2 height-100"
           />
         </el-col>

@@ -11,7 +11,13 @@
         type="danger"
         @click="replaceState()"
       >
-        从本地导入state
+        从本地导入
+      </el-button>
+      <el-button
+        type="danger"
+        @click="replaceFile()"
+      >
+        从文件导入
       </el-button>
     </template>
     <template v-else>
@@ -46,7 +52,7 @@
 
 <script lang="tsx">
 import { mapState, mapMutations, mapGetters } from 'vuex'
-// import axios from 'axios'
+import axios from 'axios'
 import Tree from '../components/Tree'
 import { recursionRelation } from '../assets/js/render/util'
 import { create } from '../assets/js/render'
@@ -154,11 +160,6 @@ export default {
     },
 
     save () {
-      // axios.post('/generate', {
-      //   state: JSON.stringify(this.$store.state)
-      // }, {
-      //   baseURL: 'http://localhost:3000'
-      // })
       const loading = this.$loading()
       const form = document.createElement('form')
       // form.action = 'http://localhost:3003/generate/generate'
@@ -178,8 +179,8 @@ export default {
       }, 2000)
     },
 
-    replaceState () {
-      const local = JSON.parse(localStorage.local)
+    replaceState (data) {
+      const local = data || JSON.parse(localStorage.local)
       if (local) {
         // 补全 undefined
         local.components = local.components.map(one => {
@@ -189,10 +190,21 @@ export default {
 
         create(null, local.components, local.relationShip, 2)
         this.$store.replaceState(local)
+
         this.$nextTick(() => {
           this.$refs.tree.setCurr(local.components[0])
         })
       }
+    },
+
+    replaceFile () {
+      this.$prompt('输入你之前定义上传过的组件名称', '输入组件名称').then(res => {
+        axios.get(`/generate/file?filename=${res.value}`, {
+          // baseURL: 'http://localhost:3003'
+        }).then(res => {
+          this.replaceState({ ...res.data, currentComponent: '' })
+        })
+      })
     }
   }
 }

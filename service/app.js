@@ -4,6 +4,9 @@ const bodyParser = require('body-parser')
 const fs = require('fs')
 const path = require('path')
 const { execSync, exec } = require('child_process')
+const NodeSsh = require('node-ssh')
+const ssh = new NodeSsh()
+const request = require('request')
 
 // app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -18,14 +21,13 @@ app.get('/generate/del', function (req, res) {
   }
 })
 
-app.post('/generate/generate', function (req, res) {
-  const state = JSON.parse(req.body.state)
+function generate (state, cb) {
   const fileName = `${state.components[0].name}.ts`
   const fileNameJs = `${state.components[0].name}.js`
   let script = ''
 
   const content = `(function () {
-    const state = ${req.body.state}
+    const state = ${JSON.stringify(state)}
     // @ts-ignore
     defineElem(state.components, state.relationShip)
   })()`
@@ -68,16 +70,116 @@ app.post('/generate/generate', function (req, res) {
 
   try {
     execSync(`tsc ${filePath} --target es5`)
+    cb(fileNameJs)
+  } catch (e) {
+    throw e
+  }
+}
+
+async function upload (fileBuffer) {
+  return new Promise((resolve, reject) => {
+    request.post(
+      {
+        url: 'https://filesystem.api.jituancaiyun.com/sfs/webUpload/srvfile?fileType=2&src=cdn',
+        formData: {
+          // upfile: fs.createReadStream(path.resolve(__dirname, 'public', file))
+          upfile: fileBuffer
+        },
+        headers: {
+          Origin: 'https://internal.jituancaiyun.com',
+          Referer: 'https://internal.jituancaiyun.com/fe/upload/index.html'
+        }
+      },
+      (err, httpResponse, body) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(body)
+        }
+      }
+    )
+  })
+}
+
+app.post('/generate/generate', function (req, res) {
+  const state = JSON.parse(req.body.state)
+  generate(state, fileNameJs => {
     res.status(200).download(path.resolve(root, fileNameJs), fileNameJs, function (err) {
       if (!err) {
-        exec(`rm -rf ${filePath} ${path.resolve(root, fileNameJs)}`)
+        // exec(`rm -rf ${filePath} ${path.resolve(root, fileNameJs)}`)
+        exec(`rm -rf ${filePath}`)
       } else {
         throw err
       }
     })
-  } catch (e) {
-    throw e
+  })
+})
+
+app.get('/generate/sync', async function (req, res) {
+  // const { file, dest } = req.query
+  // if (!file) {
+  //   res.status(500).send('file 参数必传，例如 file=my-rule,my-site')
+  //   return
+  // }
+  await ssh.connect({
+    host: '10.0.10.86',
+    username: 'admin',
+    privateKey: path.resolve(__dirname, 'ssh/yangming')
+  }).catch(err => {
+    res.status(500).send(err.message)
+    return Promise.reject(err)
+  })
+  await ssh.putDirectory(path.resolve(__dirname, 'public'), '/home/admin/gitlab/generate-components/')
+  await ssh.execCommand(`git add . && git commit -m "sync public" && git push`, { cwd: '/home/admin/gitlab/generate-components/' })
+
+  res.status(200).send('sync success')
+})
+
+app.get('/generate/cdn', async function (req, res) {
+  // 多个文件
+  const filename = req.query.filename
+  const root = path.resolve(__dirname, 'public')
+  const fileMap = {}
+  if (!filename) {
+    res.status(500).send('filename 必须传')
+  } else {
+    const fileArr = filename.split(',')
+    for (let i = 0; i < fileArr.length; i++) {
+      const file = fileArr[i]
+      let buffer
+      try {
+        buffer = fs.readFileSync(path.resolve(root, `${file}.js`))
+      } catch (e) {
+        res.status(500).send(`${file}.js 不存在`)
+      }
+      const uploadRes = await upload(buffer)
+      fileMap[file] = JSON.parse(uploadRes).fileUrl.replace('https://statics.jituancaiyun.com', 'https://global.uban360.com')
+    }
+    res.status(200).send(`window.componentsMap = ${JSON.stringify(fileMap)}`)
   }
+})
+
+app.get('/generate/file', async function (req, res) {
+  const filename = req.query.filename
+  if (!filename) {
+    res.status(500).send('filename 必须传')
+    return
+  }
+
+  const file = path.resolve(__dirname, './public', `${filename}.js`)
+  let content
+  try {
+    content = fs.readFileSync(file, 'utf8')
+  } catch (e) {
+    res.status(500).send(`${filename} 不存在`)
+    return
+  }
+
+  let result
+  content.replace(/\(function \(\) \{([\s\S]+?)\/\/ @ts-ignore/, (a, b) => {
+    result = b.replace('var state = ', '').trim()
+  })
+  res.status(200).json(JSON.parse(result.substr(0, result.length - 1)))
 })
 
 app.listen(3003, () => console.log('custom element service listening on port 3003!'))

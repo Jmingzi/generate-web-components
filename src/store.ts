@@ -79,7 +79,7 @@ export default new Vuex.Store<RootState>({
       state.currentComponent = payload
     },
     setCurrent (state, payload) {
-      state.currentComponent = state.components.find(x => x.id === payload.id)
+      state.currentComponent = state.components.find(x => Number(x.id) === Number(payload.id))
     },
     updateNodeText (state, val) {
       const root = state.components.find(x => x.root)
