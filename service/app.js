@@ -8,7 +8,7 @@ const { execSync, exec } = require('child_process')
 // app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.get('/del', function (req, res) {
+app.get('/generate/del', function (req, res) {
   const root = path.resolve(__dirname, 'public')
   try {
     execSync(`rm -rf ${path.resolve(root, 'define.js')} ${path.resolve(root, 'define.ts')}`)
@@ -18,7 +18,7 @@ app.get('/del', function (req, res) {
   }
 })
 
-app.post('/generate', function (req, res) {
+app.post('/generate/generate', function (req, res) {
   const state = JSON.parse(req.body.state)
   const fileName = `${state.components[0].name}.ts`
   const fileNameJs = `${state.components[0].name}.js`

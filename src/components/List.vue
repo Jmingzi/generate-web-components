@@ -161,8 +161,8 @@ export default {
       // })
       const loading = this.$loading()
       const form = document.createElement('form')
-      // form.action = 'http://localhost:3003/generate'
-      form.action = 'http://iming.work:3003/generate'
+      // form.action = 'http://localhost:3003/generate/generate'
+      form.action = 'http://iming.work/generate/generate'
       form.method = 'POST'
       const input = document.createElement('input')
       input.name = 'state'
