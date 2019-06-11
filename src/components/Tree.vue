@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 import { query } from '../assets/js/render/dom'
 import { queen } from '../assets/js/render/update'
 
@@ -64,7 +64,8 @@ export default {
   },
 
   computed: {
-    ...mapState(['currentComponent', 'components'])
+    ...mapState(['currentComponent', 'components']),
+    ...mapGetters(['root'])
   },
 
   created () {
@@ -74,11 +75,12 @@ export default {
     ...mapMutations(['setCurrent']),
 
     setCurr (item) {
-      const root = queen.getEl(this.components[0]).shadowRoot
-      const active = query('active', root, 'div', true)
+      // const root = queen.getEl(this.components[0]).shadowRoot
+      const active = query('active', this.root.shadowRoot, 'div', true)
       active && active.classList.remove('active')
 
-      query(item.className, root, 'div').classList.add('active')
+      const div = query(item.className, this.root.shadowRoot, 'div')
+      div && div.classList.add('active')
       this.setCurrent(item)
     }
   }

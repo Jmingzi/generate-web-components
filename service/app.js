@@ -57,14 +57,14 @@ app.post('/generate', function (req, res) {
     script = script.replace(/'px'\)/g, '"vw")')
     fs.writeFileSync(commonPath, script, 'utf8')
     try {
-      execSync(`tsc ${commonPath}`)
+      execSync(`tsc ${commonPath} --target es5`)
     } catch (e) {
       throw e
     }
   }
 
   try {
-    execSync(`tsc ${filePath}`)
+    execSync(`tsc ${filePath} --target es5`)
     res.status(200).download(path.resolve(root, fileNameJs), fileNameJs, function (err) {
       if (!err) {
         exec(`rm -rf ${filePath} ${path.resolve(root, fileNameJs)}`)
