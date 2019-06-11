@@ -104,7 +104,7 @@ async function upload (fileBuffer) {
 app.post('/generate/generate', function (req, res) {
   const state = JSON.parse(req.body.state)
   generate(state, fileNameJs => {
-    res.status(200).download(path.resolve(root, fileNameJs), fileNameJs, function (err) {
+    res.status(200).download(path.resolve(__dirname, './public/', fileNameJs), fileNameJs, function (err) {
       if (!err) {
         // exec(`rm -rf ${filePath} ${path.resolve(root, fileNameJs)}`)
         exec(`rm -rf ${filePath}`)
