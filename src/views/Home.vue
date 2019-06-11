@@ -69,11 +69,17 @@ export default Vue.extend({
     setRootProps () {
       const h = this.$createElement
       const props = this.root.props.split(',')
+      const relas = this.root.propsRelation
+        ? this.root.propsRelation.split(',').map((x: any) => x.split('-'))
+        : []
+      const i = relas.findIndex((x: any) => Number(x[0]) === this.currentComponent.id)
+      const value = i > -1 ? relas[i][1] : ''
+
       this.$msgbox({
         title: '选择props',
         message: h('el-select', {
           props: {
-            value: ''
+            value
           },
           on: {
             change: (val: any) => {

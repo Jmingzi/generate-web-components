@@ -115,9 +115,13 @@ export default new Vuex.Store<RootState>({
       const relation = root && root.propsRelation
       const item = `${id}-${name}`
       if (relation) {
-        const exist = relation.indexOf(item)
-        if (exist === -1) {
-          root.propsRelation += `,${item}`
+        const relas = relation.split(',').map((x: any) => x.split('-'))
+        const exist = relas.some((x: any) => x[1] === name)
+        if (!exist) {
+          // 监测 id 是否存在
+          const i = relas.findIndex((x: any) => Number(x[0]) === id)
+          i > -1 ? relas.splice(i, 1, [id, name]) : relas.push([id, name])
+          root.propsRelation = relas.map((x: any) => x.join('-')).join(',')
         } else {
           Vue.prototype.$message.error('该属性已被绑定，此设置无效')
         }

@@ -122,7 +122,12 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         shadow.appendChild(rootDiv)
       }
 
-      this.setPropsRelation(this.getAttribute(PROPS_RELATION) || '')
+      queen.add(root.id, {
+        id: root.id,
+        className: root.className,
+        elem: this
+      })
+      // this.setPropsRelation(this.getAttribute(PROPS_RELATION) || '')
     }
 
     connectedCallback () {
@@ -131,13 +136,6 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
       style.className = 'active'
       style.textContent = `.active {\n border: 1px blue dashed !important;overflow:hidden; \n}`
       this.shadowRoot && this.shadowRoot.appendChild(style)
-
-      queen.add(root.id, {
-        id: root.id,
-        className: root.className,
-        elem: this
-        // data: root
-      })
     }
 
     adoptedCallback () {
@@ -155,8 +153,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         // id-props,id-props 例如：
         // <demo-tag props-relation="1-imgSrc,2-text" imgSrc="" text="" />
         this.setPropsRelation(newValue)
-      }
-      if (this.propsRelation.length) {
+      } else if (this.propsRelation.length) {
         const item = this.propsRelation.find((x: any) => x.name === name)
         if (item) {
           const component = components.find((x: any) => Number(x.id) === Number(item.id))
@@ -231,7 +228,6 @@ function createRootChild (
   // root
   const rootElem = query(rootData.className, shadow, 'div')
   const path = recursionFindPath(relation, updateData.id)
-  console.log(path)
   // 去除 root 的索引
   path.shift()
   let currentElem = rootElem

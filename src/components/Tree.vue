@@ -75,11 +75,11 @@ export default {
     ...mapMutations(['setCurrent']),
 
     setCurr (item) {
-      // const root = queen.getEl(this.components[0]).shadowRoot
-      const active = query('active', this.root.shadowRoot, 'div', true)
+      const root = queen.getEl(this.root).shadowRoot
+      const active = query('active', root, 'div', true)
       active && active.classList.remove('active')
 
-      const div = query(item.className, this.root.shadowRoot, 'div')
+      const div = query(item.className, root, 'div')
       div && div.classList.add('active')
       this.setCurrent(item)
     }

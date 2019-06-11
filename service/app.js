@@ -55,6 +55,8 @@ app.post('/generate', function (req, res) {
     script = script.replace(/export/g, '')
     // 处理单位
     script = script.replace(/'px'\)/g, '"vw")')
+    // 包裹全局
+    script = `(function (win) {\n${script.replace('function defineElem', '//@ts-ignore\nwin.defineElem = function')}\n})(window)`
     fs.writeFileSync(commonPath, script, 'utf8')
     try {
       execSync(`tsc ${commonPath} --target es5`)

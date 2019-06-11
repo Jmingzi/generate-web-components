@@ -95,7 +95,7 @@ export default {
             this.demoCode += arr.length ? arr.slice(1).reduce((sum, item) => sum + `\n  ${item}=""`, '') : ''
             this.demoCode += `\n`
           }
-          this.demoCode += `  propsRelation="${val.propsRelation || ''}"\n`
+          this.demoCode += `  props-relation="${val.propsRelation || ''}"\n`
           this.demoCode += `/>`
         }
       },
@@ -212,4 +212,5 @@ export default {
     width 100%
     padding 10px
     background-color #f2f2f2
+    white-space pre-wrap
 </style>
