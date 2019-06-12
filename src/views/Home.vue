@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header class="bg-blue c-f flex-center-align">
-      <h1>web component 组件生成器</h1>
+      <h1>Web Component 组件生成器</h1>
     </el-header>
     <el-main class="main">
       <el-row class="height-100">

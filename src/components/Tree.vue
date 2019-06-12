@@ -6,37 +6,50 @@
       class="tree"
     >
       <div
-        class="tree__item"
-        :class="{ 'bg-f2': currentComponent && currentComponent.id === item.id }"
+        class="tree__item flex-between"
+        :class="{ 'bg-f2': isCurr(item) }"
         @click="setCurr(item)"
       >
-        <i class="el-icon-caret-bottom" />
-        <span>{{ item.root ? '根结点' : `子节点${item.className.substr(-4)}` }}</span>
-        <template v-if="item.type === 1">
-          <el-button type="text" @click.stop="$emit('append', item, 1)">添加块</el-button>
-          <el-button type="text" @click.stop="$emit('append', item, 2)">添加文本</el-button>
-          <el-button type="text" @click.stop="$emit('append', item, 3)">添加图片</el-button>
-        </template>
-        <template
-          v-if="!item.root"
-        >
-          <el-button
-            type="text"
-            @click.stop="$emit('copy', item, parent)"
+        <div @click="$set(collapse, item.id, !collapse[item.id])">
+          <i
+            class="c-999 mr5"
+            :class="{
+              'c-fff': item.type !== 1,
+              'el-icon-caret-right': collapse[item.id],
+              'el-icon-caret-bottom': !collapse[item.id]
+            }"
+          />
+          <span>{{ getName(item) }}</span>
+        </div>
+        <div class="pr10" v-if="isCurr(item)">
+          <template v-if="item.type === 1">
+            <el-button type="text" @click.stop="$emit('append', item, 1)">添加块</el-button>
+            <el-button type="text" @click.stop="$emit('append', item, 2)">添加文本</el-button>
+            <el-button type="text" @click.stop="$emit('append', item, 3)">添加图片</el-button>
+          </template>
+          <template
+            v-if="!item.root"
           >
-            复制粘贴
-          </el-button>
-          <el-button
-            type="text"
-            @click.stop="$emit('remove', item, parent)"
-          >
-            删除
-          </el-button>
-        </template>
+            <el-button
+              type="text"
+              @click.stop="$emit('copy', item, parent)"
+            >
+              复制粘贴
+            </el-button>
+            <el-button
+              type="text"
+              @click.stop="$emit('remove', item, parent)"
+            >
+              删除
+            </el-button>
+          </template>
+        </div>
       </div>
       <tree
+        v-show="collapse[item.id] !== true"
         :list="item.children"
         :parent="item"
+        :level="level + 1"
         @append="(val, type) => $emit('append', val, type)"
         @remove="(val, p) => $emit('remove', val, p)"
         @copy="(val, p) => $emit('copy', val, p)"
@@ -53,6 +66,12 @@ import { queen } from '../assets/js/render/update'
 export default {
   name: 'Tree',
 
+  data () {
+    return {
+      collapse: {}
+    }
+  },
+
   props: {
     list: {
       type: Array,
@@ -60,6 +79,10 @@ export default {
     },
     parent: {
       type: Object
+    },
+    level: {
+      type: Number,
+      default: 1
     }
   },
 
@@ -73,6 +96,18 @@ export default {
 
   methods: {
     ...mapMutations(['setCurrent']),
+
+    isCurr (item) {
+      return this.currentComponent && this.currentComponent.id === item.id
+    },
+
+    getName (item) {
+      // item.root ? '根结点' : `子节点${item.className.substr(-4)}`
+      // if (item.root) {
+      //   return `${this.level} - 块`
+      // }
+      return `${this.level} - ${['块', '文本', '图片'][item.type - 1]} `
+    },
 
     setCurr (item) {
       const root = queen.getEl(this.root).shadowRoot
@@ -89,6 +124,10 @@ export default {
 
 <style lang="stylus">
 .tree-group
-  .tree-group
-    margin-left 10px
+  & &
+    padding-left 15px
+  .tree__item
+    line-height 30px
+    ^[0] &
+      // padding-left 20px
 </style>

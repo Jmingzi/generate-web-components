@@ -81,6 +81,17 @@ export default new Vuex.Store<RootState>({
     setCurrent (state, payload) {
       state.currentComponent = state.components.find(x => Number(x.id) === Number(payload.id))
     },
+    addRootAttr (state, prop) {
+      const root = state.components.find(x => x.root)
+      if (root) {
+        const arr = root.props.split(',')
+        const newArr = prop.split(',')
+        root.props = [...new Set(arr.concat(newArr))].join(',')
+        if (state.currentComponent && state.currentComponent.id === root.id) {
+          state.currentComponent = root
+        }
+      }
+    },
     updateNodeText (state, val) {
       const root = state.components.find(x => x.root)
       updateNodeText(root as Component, state.currentComponent as Component, val)

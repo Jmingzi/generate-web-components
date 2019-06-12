@@ -42,6 +42,7 @@ export default Vue.extend({
   display flex
   justify-content center
   align-items center
+  flex-direction column
   &__mobile
     width 375px
     height calc(100vh - 200px)

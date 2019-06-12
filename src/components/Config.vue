@@ -289,6 +289,8 @@ export default Vue.extend<Init>({
       width 100%
   &__group
     width 100%
+    & &
+      margin-left 10px
     &--title
       padding 5px
       margin 5px 0

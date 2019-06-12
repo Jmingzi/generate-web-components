@@ -2,12 +2,6 @@
   <div class="list">
     <template v-if="components.length === 0">
       <el-button
-        type="primary"
-        @click="create"
-      >
-        新建空白组件
-      </el-button>
-      <el-button
         type="danger"
         @click="replaceState()"
       >
@@ -19,6 +13,12 @@
       >
         从文件导入
       </el-button>
+      <el-button
+        type="primary"
+        @click="create"
+      >
+        新建组件
+      </el-button>
     </template>
     <template v-else>
       <el-button
@@ -29,13 +29,21 @@
       </el-button>
       <el-button
         type="danger"
+        @click="addAttr()"
+      >
+        添加自定义属性
+      </el-button>
+      <el-button
+        type="danger"
         @click="save()"
       >
-        生成js文件
+        下载js文件
       </el-button>
     </template>
-    <p class="mtb10 bg-f2 p10 f14">节点树 {{ root ? `<${root.name} />` : '' }}</p>
+    <p class="mt10 list__title">组件节点树 {{ root ? `<${root.name} />` : '' }}</p>
+
     <tree
+      class="mt10"
       ref="tree"
       :list="nodeTree"
       @append="appendNode"
@@ -43,8 +51,12 @@
       @copy="copy"
     />
 
-    <div class="code">
-      <p>使用演示</p>
+    <div v-show="demoCode" class="code">
+      <p class="mb10 list__title">代码演示</p>
+      <el-alert
+        title="使用组件时，不要忘了拷贝 props-relation 属性"
+        type="warning">
+      </el-alert>
       <pre v-text="demoCode" />
     </div>
   </div>
@@ -99,9 +111,8 @@ export default {
           if (val.props) {
             const arr = val.props.split(',')
             this.demoCode += arr.length ? arr.slice(1).reduce((sum, item) => sum + `\n  ${item}=""`, '') : ''
-            this.demoCode += `\n`
+            this.demoCode += arr.length > 1 ? `\n  props-relation="${val.propsRelation || ''}"\n` : ''
           }
-          this.demoCode += `  props-relation="${val.propsRelation || ''}"\n`
           this.demoCode += `/>`
         }
       },
@@ -113,26 +124,36 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['createEmpty', 'createCopy', 'deleteComponent']),
+    ...mapMutations(['createEmpty', 'createCopy', 'deleteComponent', 'addRootAttr']),
 
     create () {
       this.$prompt('组件名称为小写短杆连接，例如 a-b', '新建组件').then((val: any) => {
         if (/^[a-z]+(-[a-z]+)+$/.test(val.value)) {
-          this.$prompt('为你的组件添加自定义属性列表，多个英文逗号分隔', '添加属性').then((props: any) => {
-            if (/^[a-z][a-zA-Z,]*[a-zA-Z]$/.test(props.value)) {
-              this.createEmpty({
-                type: 1,
-                name: val.value,
-                props: `props-relation,${props.value}`
-              })
-            } else {
-              this.$message.error('属性不对呢')
-            }
-          })
+          this.addAttr(val.value)
         } else {
           this.$message.error('名称不对呢')
         }
       })
+    },
+
+    doCreate (name, prop) {
+      if (name) {
+        // 初次创建
+        this.createEmpty({
+          type: 1,
+          name,
+          props: `props-relation${prop ? `,${prop}` : ''}`
+        })
+      } else if (prop) {
+        // 后续新增属性
+        this.addRootAttr(prop)
+        // this.$nextTick(() => {
+        //   this.$alert('添加属性后需要，刷新才能生效。刷新后请点击"从本地导入"').then(() => {
+        //     this.saveLocal()
+        //     location.reload()
+        //   })
+        // })
+      }
     },
 
     // type 1 div; 2 文本; 3 img
@@ -146,7 +167,9 @@ export default {
     },
 
     removeNode (component, parent) {
-      this.deleteComponent({ component, parent })
+      this.$confirm('确定要删除吗').then(() => {
+        this.deleteComponent({ component, parent })
+      })
     },
 
     copy (item, parent) {
@@ -157,6 +180,7 @@ export default {
 
     saveLocal () {
       localStorage.local = JSON.stringify(this.$store.state)
+      this.$message.success('保存本地成功')
     },
 
     save () {
@@ -207,6 +231,18 @@ export default {
           this.$message.error(err.response ? err.response.data : err.message)
         })
       })
+    },
+
+    addAttr (name) {
+      const prop = this.root && this.root.props.split(',').slice(1).join(',')
+      const msg = name || !prop ? '添加自定义属性列表，多个英文逗号分隔(可以后续添加)' : `已存在属性: ${prop}，会去重`
+      this.$prompt(msg, '添加属性').then((props: any) => {
+        if (!props.value || /^[a-z][a-zA-Z,]*[a-zA-Z]*$/.test(props.value)) {
+          this.doCreate(name, props.value)
+        } else {
+          this.$message.error('属性不对呢')
+        }
+      })
     }
   }
 }
@@ -215,13 +251,28 @@ export default {
 <style lang="stylus">
 .list
   position relative
+  &__title
+    position relative
+    border-top 1px #ddd solid
+    padding-top 10px
+    padding-left 10px
+    font-size 16px
+    color #666
+    &:before
+      content: ''
+      position absolute
+      left 0
+      width 3px
+      height 20px
+      // top 2px
+      background-color #409eff
 .code
   position absolute
   width 100%
   bottom 0
   left 0
   height 200px
-  padding 0 10px
+  // padding 0 10px
   pre
     width 100%
     padding 10px
