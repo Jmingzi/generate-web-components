@@ -211,11 +211,19 @@ export function updateRootPropsRelation (root: any) {
 }
 
 function loadComponents (nameArr: any, path: any) {
-  (nameArr || []).forEach((name: any) => {
+  const _load = (name: string) => new Promise((resolve, reject) => {
     const script = document.createElement('script')
-    script.src =  `${path + name}.js?v=${location.search.match(/v=(\d+)/) || Date.now()}`
+    const version = location.search.match(/v=(\d+)/)
+    script.src =  `${path + name}.js?v=${version && version.index && version.index > -1 ? version[1] : Date.now()}`
+    script.onload = () => {
+      resolve()
+    }
+    script.onerror = () => {
+      reject()
+    }
     document.head.appendChild(script)
   })
+  return Promise.all((nameArr || []).map(_load))
 }
 // substr end for service
 
