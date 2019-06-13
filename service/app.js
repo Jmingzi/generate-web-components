@@ -184,7 +184,7 @@ app.get('/generate/file', async function (req, res) {
   res.status(200).json(JSON.parse(result.substr(0, result.length - 1)))
 })
 
-app.get('/generate//file/:name', async function (req, res) {
+app.get('/generate/file/:name', async function (req, res) {
   const filename = req.query.filename
   if (!filename) {
     res.status(500).send('必须传 file')
