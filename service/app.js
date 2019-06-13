@@ -185,8 +185,8 @@ app.get('/generate/file', async function (req, res) {
 })
 
 app.get('/generate/file/:name', async function (req, res) {
-  const filename = req.query.filename
-  if (!filename) {
+  const fileName = req.params.name
+  if (!fileName) {
     res.status(500).send('必须传 file')
     return
   }
@@ -199,10 +199,10 @@ app.get('/generate/file/:name', async function (req, res) {
       'x-sent': true
     }
   }
-  const fileName = req.params.name
   res.sendFile(fileName, options, function (err) {
     if (err) {
-      next(err)
+      // next(err)
+      console.log(err.message)
     } else {
       console.log('Sent:', fileName)
     }
