@@ -246,7 +246,7 @@ export default {
       const prop = this.root && this.root.props.split(',').slice(1).join(',')
       const msg = name || !prop ? '添加自定义属性列表，多个英文逗号分隔(可以后续添加)' : `已存在属性: ${prop}，会去重`
       this.$prompt(msg, '添加属性').then((props: any) => {
-        if (!props.value || /^[a-z][a-zA-Z,]*[a-zA-Z]*$/.test(props.value)) {
+        if (!props.value || /^[a-z][a-zA-Z,-]*[a-zA-Z]$/.test(props.value)) {
           this.doCreate(name, props.value)
         } else {
           this.$message.error('属性不对呢')
