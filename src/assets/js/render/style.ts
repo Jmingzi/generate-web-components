@@ -2,13 +2,17 @@ import { toCamel, toLowerLine } from './util'
 import { ComponentStyle } from '../item'
 
 // substr start for service
+function isNumber (num: string) {
+  return num && /^[-\d]*[\d]$/.test(num)
+}
+
 function addUnit (val: any, unit?: 'px' | 'vw') {
   if (typeof val === 'string') {
     val = val.trim()
   }
   const isVw = unit === 'vw'
-  return unit && /^\d+$/.test(val) && +val !== 0
-    ? `${isVw ? `${val / 3.75}vw` : `${val}${unit}`}`
+  return unit && isNumber(val) && +val !== 0
+    ? `${isVw ? `${(val / 3.75).toFixed(2)}vw` : `${val}${unit}`}`
     : val
 }
 
