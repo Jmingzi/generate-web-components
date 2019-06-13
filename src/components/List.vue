@@ -196,6 +196,7 @@ export default {
       const loading = this.$loading()
       const form = document.createElement('form')
       // form.action = 'http://localhost:3003/generate/generate'
+      form.style.display = 'none'
       form.action = '/generate/generate'
       form.method = 'POST'
       const input = document.createElement('input')
@@ -209,7 +210,7 @@ export default {
       form.submit()
       setTimeout(() => {
         loading.close()
-      }, 2000)
+      }, 3000)
     },
 
     replaceState (data) {
@@ -306,6 +307,8 @@ export default {
   pre
     width 100%
     padding 10px
+    height 110px
+    overflow: auto
     background-color #f2f2f2
     white-space pre-wrap
 .tree__wrap
