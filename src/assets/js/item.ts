@@ -98,8 +98,10 @@ export const schema = {
         name: '常用布局',
         type: 'select',
         options: [
+          { label: '无', value: '' },
           { label: 'flex-between', value: 'display:flex;justify-content:space-between;' },
-          { label: 'flex-center', value: 'display:flex;justify-content:space-between;align-items:center;' },
+          { label: 'flex-center', value: 'display:flex;justify-content:center;align-items:center;' },
+          { label: 'flex-between-center', value: 'display:flex;justify-content:space-between;align-items:center;' },
         ]
       },
       customStyle: {
