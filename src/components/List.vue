@@ -35,6 +35,12 @@
       </el-button>
       <el-button
         type="danger"
+        @click="delAttr()"
+      >
+        删除属性
+      </el-button>
+      <el-button
+        type="danger"
         @click="save()"
       >
         下载js文件
@@ -127,7 +133,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['createEmpty', 'createCopy', 'deleteComponent', 'addRootAttr']),
+    ...mapMutations(['createEmpty', 'createCopy', 'deleteComponent', 'addRootAttr', 'delRootProp']),
 
     create () {
       this.$prompt('组件名称为小写短杆连接，例如 a-b', '新建组件').then((val: any) => {
@@ -245,6 +251,27 @@ export default {
         } else {
           this.$message.error('属性不对呢')
         }
+      })
+    },
+
+    delAttr () {
+      const h = this.$createElement
+      const prop = this.root && this.root.props.split(',').slice(1)
+      this.$msgbox({
+        title: '属性列表',
+        message: h('div', null, prop.map(name => h('el-tag', {
+          class: 'mr10',
+          props: {
+            closable: true
+          },
+          on: {
+            close: () => {
+              this.delRootProp(name)
+              this.$msgbox.close()
+              this.$message.success('删除成功')
+            }
+          }
+        }, name)))
       })
     }
   }

@@ -92,6 +92,20 @@ export default new Vuex.Store<RootState>({
         }
       }
     },
+    delRootProp (state, prop) {
+      const root = state.components.find(x => x.root)
+      if (root) {
+        const p = root.props.split(',')
+        const index = p.findIndex(x => x === prop)
+        if (index > -1) {
+          p.splice(index, 1)
+          root.props = p.join(',')
+        }
+        if (state.currentComponent && state.currentComponent.id === root.id) {
+          state.currentComponent = root
+        }
+      }
+    },
     updateNodeText (state, val) {
       const root = state.components.find(x => x.root)
       updateNodeText(root as Component, state.currentComponent as Component, val)
