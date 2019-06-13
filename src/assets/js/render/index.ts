@@ -170,7 +170,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         const item = x.split('-')
         return {
           id: item[0],
-          name: item[1]
+          name: item.slice(1).join('-')
         }
       })
     }
