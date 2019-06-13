@@ -72,7 +72,7 @@ export default Vue.extend({
         ? this.root.propsRelation.split(',').map((x: any) => x.split('-'))
         : []
       const i = relas.findIndex((x: any) => Number(x[0]) === this.currentComponent.id)
-      const value = i > -1 ? relas[i][1] : ''
+      const value = i > -1 ? relas[i].slice(1).join('-') : ''
 
       this.$msgbox({
         title: '选择props',

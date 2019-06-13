@@ -184,4 +184,29 @@ app.get('/generate/file', async function (req, res) {
   res.status(200).json(JSON.parse(result.substr(0, result.length - 1)))
 })
 
+app.get('/generate//file/:name', async function (req, res) {
+  const filename = req.query.filename
+  if (!filename) {
+    res.status(500).send('必须传 file')
+    return
+  }
+
+  const options = {
+    root: path.resolve(__dirname, 'public'),
+    dotfiles: 'deny',
+    headers: {
+      // 'x-timestamp': Date.now(),
+      'x-sent': true
+    }
+  }
+  const fileName = req.params.name
+  res.sendFile(fileName, options, function (err) {
+    if (err) {
+      next(err)
+    } else {
+      console.log('Sent:', fileName)
+    }
+  })
+})
+
 app.listen(3003, () => console.log('custom element service listening on port 3003!'))
