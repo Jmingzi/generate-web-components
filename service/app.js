@@ -70,7 +70,7 @@ function generate (state, cb) {
 
   try {
     execSync(`tsc ${filePath} --target es5`)
-    cb(fileNameJs)
+    cb(fileNameJs, filePath)
   } catch (e) {
     throw e
   }
@@ -103,7 +103,7 @@ async function upload (fileBuffer) {
 
 app.post('/generate/generate', function (req, res) {
   const state = JSON.parse(req.body.state)
-  generate(state, fileNameJs => {
+  generate(state, (fileNameJs, filePath) => {
     res.status(200).download(path.resolve(__dirname, './public/', fileNameJs), fileNameJs, function (err) {
       if (!err) {
         // exec(`rm -rf ${filePath} ${path.resolve(root, fileNameJs)}`)
