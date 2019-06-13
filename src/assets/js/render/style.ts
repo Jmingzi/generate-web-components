@@ -57,12 +57,33 @@ export const getStyleBase = (style: any, returnObj?: boolean): any => {
     height,
     isAutoHeight,
     textAlign,
-    customStyle
+    customStyle,
+    marginAuto,
+    ellipse,
+    overflow,
+    layout
   } = style
   const base = {
     width: isAutoWidth ? 'auto' : addUnit(width, 'px'),
     height: isAutoHeight ? 'auto' : addUnit(height, 'px'),
     textAlign: textAlign
+  }
+  if (marginAuto) {
+    // @ts-ignore
+    base.margin = '0 auto'
+  }
+  if (ellipse) {
+    Object.assign(base, {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    })
+  } else if (overflow) {
+    // @ts-ignore
+    base.overflow = overflow
+  }
+  if (layout) {
+    Object.assign(base, transferToStyleObject(layout))
   }
   if (returnObj) {
     return Object.assign(base, transferToStyleObject(customStyle))

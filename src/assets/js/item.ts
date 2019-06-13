@@ -61,7 +61,7 @@ export const schema = {
         type: 'checkbox'
       },
       textAlign: {
-        name: '对齐方式',
+        name: '文本对齐',
         type: 'select',
         options: [
           {
@@ -76,6 +76,30 @@ export const schema = {
             label: '右',
             value: 'right'
           }
+        ]
+      },
+      marginAuto: {
+        name: 'margin居中',
+        type: 'checkbox'
+      },
+      ellipse: {
+        name: '文本溢出',
+        type: 'checkbox'
+      },
+      overflow: {
+        name: 'overflow',
+        type: 'select',
+        options: [
+          { label: 'hidden', value: 'hidden' },
+          { label: 'auto', value: 'auto' }
+        ]
+      },
+      layout: {
+        name: '常用布局',
+        type: 'select',
+        options: [
+          { label: 'flex-between', value: 'display:flex;justify-content:space-between;' },
+          { label: 'flex-center', value: 'display:flex;justify-content:space-between;align-items:center;' },
         ]
       },
       customStyle: {
@@ -349,10 +373,14 @@ export const schema = {
 export const ItemStyle = {
   base: {
     width: undefined,
-    isAutoWidth: true,
     height: undefined,
+    isAutoWidth: true,
     isAutoHeight: true,
-    textAlign: 'left',
+    marginAuto: false,
+    textAlign: undefined,
+    ellipse: false,
+    overflow: undefined,
+    layout: undefined,
     customStyle: 'box-sizing:border-box;'
   },
   margin: {
