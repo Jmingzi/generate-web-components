@@ -128,6 +128,7 @@ export default {
     padding-left 15px
   .tree__item
     line-height 30px
+    white-space nowrap
     ^[0] &
       // padding-left 20px
 </style>

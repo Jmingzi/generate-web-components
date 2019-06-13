@@ -42,14 +42,17 @@
     </template>
     <p class="mt10 list__title">组件节点树 {{ root ? `<${root.name} />` : '' }}</p>
 
-    <tree
-      class="mt10"
-      ref="tree"
-      :list="nodeTree"
-      @append="appendNode"
-      @remove="removeNode"
-      @copy="copy"
-    />
+    <div class="tree__wrap">
+      <tree
+        class="mt10"
+        ref="tree"
+        :list="nodeTree"
+        @append="appendNode"
+        @remove="removeNode"
+        @copy="copy"
+      />
+    </div>
+
 
     <div v-show="demoCode" class="code">
       <p class="mb10 list__title">代码演示</p>
@@ -278,4 +281,7 @@ export default {
     padding 10px
     background-color #f2f2f2
     white-space pre-wrap
+.tree__wrap
+  height calc(100vh - 420px)
+  overflow: auto
 </style>
