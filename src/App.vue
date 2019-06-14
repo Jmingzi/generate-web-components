@@ -27,6 +27,8 @@ blue = #409EFF
 //  background-color #f2f2f2
 .c-f
   color #fff
+.mt10
+  margin-top 10px
 //.height-100
 //  height 100%
 //.p10

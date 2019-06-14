@@ -39,12 +39,20 @@
       >
         删除属性
       </el-button>
-      <el-button
-        type="danger"
-        @click="save()"
-      >
-        下载js文件
-      </el-button>
+      <div class="mt10">
+        <el-button
+          type="danger"
+          @click="save()"
+        >
+          保存并下载
+        </el-button>
+        <el-button
+          type="primary"
+          @click="onlySave()"
+        >
+          保存到远端
+        </el-button>
+      </div>
     </template>
     <p class="mt10 list__title">组件节点树 {{ root ? `<${root.name} />` : '' }}</p>
 
@@ -211,6 +219,24 @@ export default {
       setTimeout(() => {
         loading.close()
       }, 3000)
+    },
+
+    onlySave () {
+      const loading = this.$loading()
+      axios.post('http://localhost:3003/generate/savefile', null , {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          state: {
+            relationShip: this.relationShip,
+            components: this.components
+          }
+        }
+      }).then(res => {
+        loading.close()
+        this.$message.success(res.data)
+      })
     },
 
     replaceState (data) {

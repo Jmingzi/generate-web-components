@@ -11,16 +11,6 @@ const request = require('request')
 // app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.get('/generate/del', function (req, res) {
-  const root = path.resolve(__dirname, 'public')
-  try {
-    execSync(`rm -rf ${path.resolve(root, 'define.js')} ${path.resolve(root, 'define.ts')}`)
-    res.send(`rm -rf ${path.resolve(root, 'define.js')} ${path.resolve(root, 'define.ts')} 成功`)
-  } catch (e) {
-    res.send(e.message)
-  }
-})
-
 function generate (state, cb) {
   const fileName = `${state.components[0].name}.ts`
   const fileNameJs = `${state.components[0].name}.js`
@@ -101,6 +91,9 @@ async function upload (fileBuffer) {
   })
 }
 
+/**
+ * 后台保存文件并下载这个文件
+ */
 app.post('/generate/generate', function (req, res) {
   const state = JSON.parse(req.body.state)
   generate(state, (fileNameJs, filePath) => {
@@ -112,6 +105,17 @@ app.post('/generate/generate', function (req, res) {
         throw err
       }
     })
+  })
+})
+
+/**
+ * 后台仅保存文件
+ */
+app.post('/generate/savefile', function (req, res) {
+  const state = JSON.parse(Object.keys(req.body)[0]).state
+  generate(state, (fileNameJs, filePath) => {
+    exec(`rm -rf ${filePath}`)
+    res.status(200).send(`保存 ${fileNameJs} 成功`)
   })
 })
 
@@ -159,6 +163,9 @@ app.get('/generate/cdn', async function (req, res) {
   }
 })
 
+/**
+ * 后台从文件导入
+ */
 app.get('/generate/file', async function (req, res) {
   const filename = req.query.filename
   if (!filename) {
@@ -184,6 +191,9 @@ app.get('/generate/file', async function (req, res) {
   res.status(200).json(JSON.parse(result.substr(0, result.length - 1)))
 })
 
+/**
+ * 请求返回单个文件
+ */
 app.get('/generate/file/:name', async function (req, res) {
   const fileName = req.params.name
   if (!fileName) {
@@ -207,6 +217,19 @@ app.get('/generate/file/:name', async function (req, res) {
       console.log('Sent:', fileName)
     }
   })
+})
+
+/**
+ * 删除 define.js
+ */
+app.get('/generate/del', function (req, res) {
+  const root = path.resolve(__dirname, 'public')
+  try {
+    execSync(`rm -rf ${path.resolve(root, 'define.js')} ${path.resolve(root, 'define.ts')}`)
+    res.send(`rm -rf ${path.resolve(root, 'define.js')} ${path.resolve(root, 'define.ts')} 成功`)
+  } catch (e) {
+    res.send(e.message)
+  }
 })
 
 app.listen(3003, () => console.log('custom element service listening on port 3003!'))
