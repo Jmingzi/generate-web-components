@@ -41,7 +41,12 @@ function addSpecial (component: any, div: any, noEvent?: boolean) {
     // 事件句柄，便于 remove
     component.eventCallbackHandler = (e: Event) => {
       e.stopPropagation()
-      new Function('e', component.event.onClick)(e)
+      const click = div.getAttribute('onclick')
+      if (click) {
+        new Function('e', click)(e)
+      } else {
+        new Function('e', component.event.onClick)(e)
+      }
     }
     div.addEventListener('click', component.eventCallbackHandler)
   }

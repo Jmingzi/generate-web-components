@@ -159,7 +159,7 @@ export default {
         this.createEmpty({
           type: 1,
           name,
-          props: `props-relation${prop ? `,${prop}` : ''}`
+          props: `props-relation,onclick${prop ? `,${prop}` : ''}`
         })
       } else if (prop) {
         // 后续新增属性
@@ -283,7 +283,7 @@ export default {
 
     delAttr () {
       const h = this.$createElement
-      const prop = this.root && this.root.props.split(',').slice(1)
+      const prop = this.root && this.root.props.split(',').slice(2)
       this.$msgbox({
         title: '属性列表',
         message: h('div', null, prop.map(name => h('el-tag', {
