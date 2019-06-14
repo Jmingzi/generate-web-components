@@ -20,7 +20,8 @@ export interface Component {
   event: any
   eventCallbackHandler: (e: Event) => void
   text: string
-  imgSrc: string
+  imgSrc: string,
+  number: number
 }
 export type NodeType = 1 | 2 | 3
 export type ComponentStyle = {
@@ -454,6 +455,7 @@ export const item: Component = {
     onClick: ''
   },
   eventCallbackHandler () {},
+  number: 0,
   text: '',
   imgSrc: '',
   props: '',  // 'props-relation,你自己的定义的名称'

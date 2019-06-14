@@ -8,6 +8,7 @@ type StackItem = {
   className: string
   elem: Element
   // data: Component
+  // number: number,
 }
 type UpdateQueen = {
   stack: {
@@ -15,7 +16,7 @@ type UpdateQueen = {
   }
   add (id: number, obj: StackItem): void
   update (obj: Component): void
-  getEl (obj: Component): Element
+  getEl (obj: any): Element
 }
 
 export const queen: UpdateQueen = {
@@ -26,21 +27,18 @@ export const queen: UpdateQueen = {
   },
 
   update (obj) {
-    if (this.stack[obj.id]) {
-      // const item = this.stack[obj.id]
-      // updateStyle(item.elem, obj.style, obj.className)
+    if (this.stack[obj.number]) {
       query(
         obj.className,
-        this.getEl(obj).shadowRoot,
+        this.getEl(obj.number).shadowRoot,
         'style'
       ).textContent = <string>getStyle(obj.style, true, obj.className)
-      // const style = shadow && shadow.querySelector('style')
-      // style && (style.textContent = getStyleStr(obj.style))
     }
   },
 
   getEl (obj) {
-    return this.stack[obj.id].elem
+    const number = typeof obj === 'object' ? obj.number : obj
+    return this.stack[number].elem
   }
 }
 // substr end for service

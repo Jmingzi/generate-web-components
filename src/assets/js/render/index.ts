@@ -20,12 +20,13 @@ export const initComponent = (
 export const updateStyle = (rootData: Component, updateData: Component) => {
   queen.update({
     ...updateData,
-    id: rootData.id
+    id: rootData.id,
+    number: rootData.number
   })
 }
 
 // substr start for service
-function addSpecial (component: any, div: any, noEvent?: boolean) {
+function addSpecial (component: any, div: any, noEvent?: boolean, root?: any) {
   // 文本
   if (component.type === 2) {
     div.innerHTML = component.text
@@ -41,7 +42,7 @@ function addSpecial (component: any, div: any, noEvent?: boolean) {
     // 事件句柄，便于 remove
     component.eventCallbackHandler = (e: Event) => {
       e.stopPropagation()
-      const click = div.getAttribute('onclick')
+      const click = root && root.getAttribute('onclick')
       if (click) {
         new Function('e', click)(e)
       } else {
@@ -67,6 +68,7 @@ HTMLElement.prototype = BuiltInHTMLElement.prototype
 HTMLElement.prototype.constructor = HTMLElement
 Object.setPrototypeOf(HTMLElement, BuiltInHTMLElement)
 const PROPS_RELATION = 'props-relation'
+let customElemNumber = 0
 
 function defineElem (components: Array<Component>, relationShip?: ComponentRelationShip) {
   const root: Component = components.find(x => x.root) || components[0]
@@ -76,6 +78,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
     }
 
     propsRelation:any = []
+    number = undefined
 
     constructor () {
       super()
@@ -95,7 +98,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
             // if (component.type === 2) {
             //   div.innerText = component.text
             // }
-            addSpecial(component, div)
+            addSpecial(component, div, false, this)
             style.className = component.className
             style.textContent = <string>getStyle(component.style, true, component.className)
             parent[parent.length - 1].appendChild(div)
@@ -117,7 +120,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         // if (root.type === 2) {
         //   rootDiv.innerText = root.text
         // }
-        addSpecial(root, rootDiv)
+        addSpecial(root, rootDiv, false, this)
 
         const style = document.createElement('style')
         style.className = root.className
@@ -127,12 +130,22 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         shadow.appendChild(rootDiv)
       }
 
-      queen.add(root.id, {
+      this.initNumber()
+      // @ts-ignore
+      queen.add(this.number, {
         id: root.id,
         className: root.className,
         elem: this
       })
-      // this.setPropsRelation(this.getAttribute(PROPS_RELATION) || '')
+    }
+
+    initNumber () {
+      if (this.number === undefined) {
+        // @ts-ignore
+        this.number = customElemNumber += 1
+        // @ts-ignore
+        root.number = this.number
+      }
     }
 
     connectedCallback () {
@@ -152,7 +165,8 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
     }
 
     attributeChangedCallback (name: string, oldValue: string, newValue: string) {
-      console.log(name, newValue, oldValue)
+      this.initNumber()
+      // console.log(name, newValue, oldValue)
       // 获取props映射关系
       if (name === PROPS_RELATION) {
         // id-props,id-props 例如：
@@ -164,7 +178,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
           const component = components.find((x: any) => Number(x.id) === Number(item.id))
           if (component) {
             const handle = component.type === 2 ? updateNodeText : component.type === 3 ? updateNodeImgSrc : undefined
-            handle && handle(root, component, newValue)
+            handle && handle(this.number, component, newValue)
           }
         }
       }
@@ -182,16 +196,16 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
   })
 }
 
-export function updateNodeText (root: Component, component: Component, text: string) {
+export function updateNodeText (root: any, component: Component, text: string) {
   addSpecial(
     { ...component, text },
-    query(component.className, queen.getEl(root).shadowRoot, 'div'),
+    query(component.className, queen.getEl(root).shadowRoot, 'div', true),
     true
   )
 }
 
-export function updateNodeEvent (root: Component, component: Component, script: string) {
-  const div = query(component.className, queen.getEl(root).shadowRoot, 'div')
+export function updateNodeEvent (root: any, component: Component, script: string) {
+  const div = query(component.className, queen.getEl(root).shadowRoot, 'div', true)
   component.eventCallbackHandler && div.removeEventListener('click', component.eventCallbackHandler)
   component.eventCallbackHandler = (e: Event) => {
     e.stopPropagation()
@@ -200,8 +214,8 @@ export function updateNodeEvent (root: Component, component: Component, script: 
   div.addEventListener('click', component.eventCallbackHandler)
 }
 
-export function updateNodeImgSrc (root: Component, component: Component, src: string) {
-  const div = query(component.className, queen.getEl(root).shadowRoot, 'div')
+export function updateNodeImgSrc (root: any, component: Component, src: string) {
+  const div = query(component.className, queen.getEl(root).shadowRoot, 'div', true)
   if (!div.childNodes.length) {
     addSpecial({ ...component, imgSrc: src }, div, true)
   } else {
@@ -211,7 +225,7 @@ export function updateNodeImgSrc (root: Component, component: Component, src: st
 }
 
 export function updateRootPropsRelation (root: any) {
-  const el = queen.getEl(root)
+  const el = queen.getEl(root.number)
   el && el.setAttribute(PROPS_RELATION, root.propsRelation)
 }
 
@@ -245,7 +259,7 @@ function createRootChild (
   updateData: Component,
   relation: ComponentRelationShip
 ) {
-  const shadow = queen.getEl(rootData).shadowRoot
+  const shadow = queen.getEl(rootData.number).shadowRoot
   // root
   const rootElem = query(rootData.className, shadow, 'div')
   const path = recursionFindPath(relation, updateData.id)
@@ -263,7 +277,7 @@ function createRootChild (
       // if (updateData.type === 2) {
       //   div.innerText = updateData.text
       // }
-      addSpecial(updateData, div)
+      addSpecial(updateData, div, false, queen.getEl(rootData.number))
 
       currentElem.appendChild(div)
       // 创建style
@@ -301,7 +315,7 @@ export const create = (
 }
 
 export function deleteNodes (root: Component, spreadChildren: Array<Component>) {
-  const el = queen.getEl(root).shadowRoot
+  const el = queen.getEl(root.number).shadowRoot
   spreadChildren.reverse().forEach(item => {
     query(item.className, el, 'style').remove()
     query(item.className, el, 'div').remove()
