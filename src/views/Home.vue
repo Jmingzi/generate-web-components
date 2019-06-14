@@ -89,7 +89,7 @@ export default Vue.extend({
               this.$msgbox.close()
             }
           }
-        }, props.slice(1).map((name: string) => {
+        }, props.slice(2).map((name: string) => {
           return h('el-option', {
             props: {
               label: name,
