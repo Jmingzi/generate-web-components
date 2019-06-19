@@ -116,7 +116,7 @@ app.post('/generate/savefile', function (req, res) {
   })
 })
 
-app.get('/generate/sync', async function (req, res) {
+app.get('/generate/sync?file', async function (req, res) {
   await ssh.connect({
     host: '10.0.10.86',
     username: 'admin',
@@ -125,7 +125,8 @@ app.get('/generate/sync', async function (req, res) {
     res.status(500).send(err.message)
     return Promise.reject(err)
   })
-  await ssh.putDirectory(path.resolve(__dirname, 'public'), '/home/admin/gitlab/generate-components/')
+  // await ssh.putDirectory(path.resolve(__dirname, 'public'), '/home/admin/gitlab/generate-components/')
+  await ssh.putFile(path.resolve(__dirname, 'public', 'sign-modal.js'), '/home/admin/gitlab/generate-components/')
   // await ssh.putDirectory(path.resolve(__dirname, 'public'), '/data/webapps/miguvideo.net/aikanvod.miguvideo.net/h5-generate/lib-auto-sync')
   await ssh.execCommand(`git add . && git commit -m "sync public" && git push`, { cwd: '/home/admin/gitlab/generate-components/' })
   res.status(200).send('sync success')

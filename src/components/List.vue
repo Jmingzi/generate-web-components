@@ -282,7 +282,9 @@ export default {
 
     async sync () {
       const loading = this.$loading()
-      await axios.get('/generate/sync')
+      await axios.get('/generate/sync', {
+        timeout: 120000
+      })
       loading.close()
       this.$message.success('同步到 /data/webapps/miguvideo.net/aikanvod.miguvideo.net/h5-generate/lib-auto-sync 成功')
     },
