@@ -125,9 +125,9 @@ app.get('/generate/sync', async function (req, res) {
     res.status(500).send(err.message)
     return Promise.reject(err)
   })
-  // await ssh.putDirectory(path.resolve(__dirname, 'public'), '/home/admin/gitlab/generate-components/')
-  await ssh.putDirectory(path.resolve(__dirname, 'public'), '/data/webapps/miguvideo.net/aikanvod.miguvideo.net/h5-generate/lib-auto-sync')
-  // await ssh.execCommand(`git add . && git commit -m "sync public" && git push`, { cwd: '/home/admin/gitlab/generate-components/' })
+  await ssh.putDirectory(path.resolve(__dirname, 'public'), '/home/admin/gitlab/generate-components/')
+  // await ssh.putDirectory(path.resolve(__dirname, 'public'), '/data/webapps/miguvideo.net/aikanvod.miguvideo.net/h5-generate/lib-auto-sync')
+  await ssh.execCommand(`git add . && git commit -m "sync public" && git push`, { cwd: '/home/admin/gitlab/generate-components/' })
   res.status(200).send('sync success')
 })
 
