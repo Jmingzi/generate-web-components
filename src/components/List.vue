@@ -259,7 +259,7 @@ export default {
     replaceFile () {
       this.$prompt('输入你之前定义上传过的组件名称', '输入组件名称').then(res => {
         axios.get(`/generate/file?filename=${res.value}`, {
-          baseURL: 'http://localhost:3003'
+          // baseURL: 'http://localhost:3003'
         }).then(res => {
           this.replaceState({ ...res.data, currentComponent: '' })
         }).catch(err => {
