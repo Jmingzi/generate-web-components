@@ -116,7 +116,7 @@ app.post('/generate/savefile', function (req, res) {
   })
 })
 
-app.get('/generate/sync?file', async function (req, res) {
+app.get('/generate/sync', async function (req, res) {
   await ssh.connect({
     host: '10.0.10.86',
     username: 'admin',
