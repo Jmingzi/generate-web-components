@@ -8,25 +8,33 @@
         从本地导入
       </el-button>
       <el-button
-        type="danger"
+        type="primary"
+        @click="sync()"
+      >
+        同步文件到测试机器
+      </el-button>
+      <el-button
+        type="primary"
         @click="replaceFile()"
       >
         从文件导入
       </el-button>
-      <el-button
-        type="primary"
-        @click="create"
-      >
-        新建组件
-      </el-button>
+      <div class="mt10">
+        <el-button
+          type="danger"
+          @click="download()"
+        >
+          下载js文件
+        </el-button>
+        <el-button
+          type="primary"
+          @click="create"
+        >
+          新建组件
+        </el-button>
+      </div>
     </template>
     <template v-else>
-      <el-button
-        type="primary"
-        @click="saveLocal()"
-      >
-        保存到本地
-      </el-button>
       <el-button
         type="danger"
         @click="addAttr()"
@@ -41,10 +49,10 @@
       </el-button>
       <div class="mt10">
         <el-button
-          type="danger"
-          @click="save()"
+          type="primary"
+          @click="saveLocal()"
         >
-          保存并下载
+          保存到本地
         </el-button>
         <el-button
           type="primary"
@@ -82,6 +90,7 @@
 <script lang="tsx">
 import { mapState, mapMutations, mapGetters } from 'vuex'
 import axios from 'axios'
+// import qs from 'qs'
 import Tree from '../components/Tree'
 import { recursionRelation } from '../assets/js/render/util'
 import { create } from '../assets/js/render'
@@ -200,34 +209,23 @@ export default {
       this.$message.success('保存本地成功')
     },
 
-    save () {
-      const loading = this.$loading()
-      const form = document.createElement('form')
-      // form.action = 'http://localhost:3003/generate/generate'
-      form.style.display = 'none'
-      form.action = '/generate/generate'
-      form.method = 'POST'
-      const input = document.createElement('input')
-      input.name = 'state'
-      input.value = JSON.stringify({
-        relationShip: this.relationShip,
-        components: this.components
+    download () {
+      this.$prompt('请输入文件名，例如 sign-modal', '下载js').then(({ value }) => {
+        const form = document.createElement('form')
+        // form.action = `http://localhost:3003/generate/generate/${value}`
+        form.action = `/generate/generate/${value}`
+        form.method = 'GET'
+        form.style.display = 'none'
+        document.body.appendChild(form)
+        form.submit()
+        form.remove()
       })
-      form.appendChild(input)
-      document.body.appendChild(form)
-      form.submit()
-      setTimeout(() => {
-        loading.close()
-      }, 3000)
     },
 
     onlySave () {
       const loading = this.$loading()
       axios.post('/generate/savefile', null, {
       // axios.post('http://localhost:3003/generate/savefile', null, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
         data: {
           state: {
             relationShip: this.relationShip,
@@ -261,7 +259,7 @@ export default {
     replaceFile () {
       this.$prompt('输入你之前定义上传过的组件名称', '输入组件名称').then(res => {
         axios.get(`/generate/file?filename=${res.value}`, {
-          // baseURL: 'http://localhost:3003'
+          baseURL: 'http://localhost:3003'
         }).then(res => {
           this.replaceState({ ...res.data, currentComponent: '' })
         }).catch(err => {
@@ -280,6 +278,13 @@ export default {
           this.$message.error('属性不对呢')
         }
       })
+    },
+
+    async sync () {
+      const loading = this.$loading()
+      await axios.get('/generate/sync')
+      loading.close()
+      this.$message.success('同步到 /data/webapps/miguvideo.net/aikanvod.miguvideo.net/h5-generate/lib-auto-sync 成功')
     },
 
     delAttr () {

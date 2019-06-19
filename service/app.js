@@ -8,8 +8,8 @@ const NodeSsh = require('node-ssh')
 const ssh = new NodeSsh()
 const request = require('request')
 
-// app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: true }))
 
 function generate (state, cb) {
   const fileName = `${state.components[0].name}.ts`
@@ -92,19 +92,16 @@ async function upload (fileBuffer) {
 }
 
 /**
- * 后台保存文件并下载这个文件
+ * 下载文件
  */
-app.post('/generate/generate', function (req, res) {
-  const state = JSON.parse(req.body.state)
-  generate(state, (fileNameJs, filePath) => {
-    res.status(200).download(path.resolve(__dirname, './public/', fileNameJs), fileNameJs, function (err) {
-      if (!err) {
-        // exec(`rm -rf ${filePath} ${path.resolve(root, fileNameJs)}`)
-        exec(`rm -rf ${filePath}`)
-      } else {
-        throw err
-      }
-    })
+app.get('/generate/generate/:name', function (req, res) {
+  const fileNameJs = `${req.params.name}.js`
+  res.status(200).download(path.resolve(__dirname, './public/', fileNameJs), fileNameJs, function (err) {
+    if (!err) {
+      // exec(`rm -rf ${filePath}`)
+    } else {
+      throw err
+    }
   })
 })
 
@@ -112,7 +109,7 @@ app.post('/generate/generate', function (req, res) {
  * 后台仅保存文件
  */
 app.post('/generate/savefile', function (req, res) {
-  const state = JSON.parse(Object.keys(req.body)[0]).state
+  const state = req.body.state
   generate(state, (fileNameJs, filePath) => {
     exec(`rm -rf ${filePath}`)
     res.status(200).send(`保存 ${fileNameJs} 成功`)
@@ -120,11 +117,6 @@ app.post('/generate/savefile', function (req, res) {
 })
 
 app.get('/generate/sync', async function (req, res) {
-  // const { file, dest } = req.query
-  // if (!file) {
-  //   res.status(500).send('file 参数必传，例如 file=my-rule,my-site')
-  //   return
-  // }
   await ssh.connect({
     host: '10.0.10.86',
     username: 'admin',
@@ -133,9 +125,9 @@ app.get('/generate/sync', async function (req, res) {
     res.status(500).send(err.message)
     return Promise.reject(err)
   })
-  await ssh.putDirectory(path.resolve(__dirname, 'public'), '/home/admin/gitlab/generate-components/')
-  await ssh.execCommand(`git add . && git commit -m "sync public" && git push`, { cwd: '/home/admin/gitlab/generate-components/' })
-
+  // await ssh.putDirectory(path.resolve(__dirname, 'public'), '/home/admin/gitlab/generate-components/')
+  await ssh.putDirectory(path.resolve(__dirname, 'public'), '/data/webapps/miguvideo.net/aikanvod.miguvideo.net/h5-generate/lib-auto-sync')
+  // await ssh.execCommand(`git add . && git commit -m "sync public" && git push`, { cwd: '/home/admin/gitlab/generate-components/' })
   res.status(200).send('sync success')
 })
 
