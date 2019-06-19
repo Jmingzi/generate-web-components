@@ -11,7 +11,7 @@
         type="primary"
         @click="sync()"
       >
-        同步文件到测试机器
+        同步文件到86
       </el-button>
       <el-button
         type="primary"
