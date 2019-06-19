@@ -8,6 +8,7 @@
         从本地导入
       </el-button>
       <el-button
+        v-if="false"
         type="primary"
         @click="sync()"
       >
@@ -282,7 +283,8 @@ export default {
 
     async sync () {
       const loading = this.$loading()
-      await axios.get('/generate/sync', {
+      // await axios.get('/generate/sync', {
+      await axios.get('http://localhost:3003/generate/sync', {
         timeout: 120000
       })
       loading.close()
