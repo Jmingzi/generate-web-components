@@ -315,7 +315,10 @@ export default {
       if (sync) {
         await this.onlySave()
       }
-      const { data } = await axios.get(`/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`)
+      const { data } = await axios.get(
+        // `http://localhost:3003/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
+        `/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
+      )
       this.$alert(`<pre>${data}</pre>`, '文件映射关系', {
         dangerouslyUseHTMLString: true
       })
