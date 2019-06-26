@@ -6,7 +6,12 @@
   >
     <el-checkbox v-if="!!root" v-model="form.sync">是否需要同步本地文件到远端</el-checkbox>
     <el-checkbox v-model="form.innerNet">是否是内网</el-checkbox>
-    <el-input class="mt10" v-model.trim="form.origin" placeholder="cdn 服务器地址" />
+    <el-select class="mt10" v-model="form.origin">
+      <el-option label="http://aikanvod.miguvideo.net" value="http://aikanvod.miguvideo.net" />
+      <el-option label="https://aikanvod.miguvideo.com" value="https://aikanvod.miguvideo.com" />
+      <el-option label="https://developer.e.uban360.com" value="https://developer.e.uban360.com" />
+    </el-select>
+    <!--<el-input class="mt10" v-model.trim="form.origin" placeholder="cdn 服务器地址" />-->
     <input v-if="form.innerNet" type="file" @change="e => { form.file = e.target.files[0] }">
     <template v-else>
       <el-input class="mt10" v-model.trim="form.filename" placeholder="输入文件名称，逗号分隔" />
@@ -31,7 +36,7 @@ export default {
       form: {
         sync: false,
         filename: '',
-        origin: 'http://aikanvod.miguvideo.net',
+        origin: 'https://developer.e.uban360.com',
         category: 'migu',
         innerNet: true
       }
