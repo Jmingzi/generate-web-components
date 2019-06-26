@@ -75,8 +75,8 @@ async function upload (fileBuffer, filename, category, origin) {
         formData: {
           // upfile: fileBuffer
           file: fileBuffer,
-          name: filename,
-          category
+          bizName: filename,
+          src: category
         },
         headers: {
           // Origin: 'https://internal.jituancaiyun.com',
