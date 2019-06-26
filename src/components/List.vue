@@ -311,21 +311,26 @@ export default {
       this.$message.success('同步到 /data/webapps/miguvideo.net/aikanvod.miguvideo.net/h5-generate/lib-auto-sync 成功')
     },
 
-    async cdn ({ filename, sync, origin, category }) {
+    async cdn ({ filename, sync, origin, category, innerNet, file }) {
       if (sync) {
         await this.onlySave()
       }
-      const { data } = await axios.get(
-        // `http://localhost:3003/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
-        `/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
-      )
-      this.$alert(`<pre style="white-space: pre-wrap">${data}</pre>`, '文件映射关系', {
-        dangerouslyUseHTMLString: true
-      })
-      // const form = new FormData()
-      // form.append('file', e.target.files[0])
-      // form.append('name', 'aaa')
-      // axios.post('http://aikanvod.miguvideo.net/ifs/upload', form)
+      if (innerNet) {
+        const form = new FormData()
+        form.append('file', file)
+        form.append('name', file.name)
+        form.append('src', category)
+        const { data } = await axios.post(`${origin}/ifs/upload`, form)
+        this.$alert(data.value)
+      } else {
+        const { data } = await axios.get(
+          // `http://localhost:3003/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
+          `/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
+        )
+        this.$alert(`<pre style="white-space: pre-wrap">${data}</pre>`, '文件映射关系', {
+          dangerouslyUseHTMLString: true
+        })
+      }
     },
 
     delAttr () {

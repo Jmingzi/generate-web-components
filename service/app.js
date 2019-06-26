@@ -84,7 +84,6 @@ async function upload (fileBuffer, filename, category, origin) {
         }
       },
       (err, httpResponse, body) => {
-        console.log(err, body)
         if (err) {
           reject(err)
         } else {
@@ -159,7 +158,6 @@ app.get('/generate/cdn', async function (req, res) {
         const uploadRes = await upload(buffer, `${file}.js`, category, origin)
         fileMap[file] = JSON.parse(uploadRes).value
       } catch (e) {
-        console.log(e)
         // res.status(500).send(`${file}.js 不存在`)
         fileMap[file] = e.message || `${file}.js 不存在`
       }

@@ -5,8 +5,12 @@
     width="300px"
   >
     <el-checkbox v-if="!!root" v-model="form.sync">是否需要同步本地文件到远端</el-checkbox>
-    <el-input class="mt10" v-model.trim="form.filename" placeholder="输入文件名称，逗号分隔" />
+    <el-checkbox v-model="form.innerNet">是否是内网</el-checkbox>
     <el-input class="mt10" v-model.trim="form.origin" placeholder="cdn 服务器地址" />
+    <input v-if="form.innerNet" type="file" @change="e => { form.file = e.target.files[0] }">
+    <template v-else>
+      <el-input class="mt10" v-model.trim="form.filename" placeholder="输入文件名称，逗号分隔" />
+    </template>
     <el-input class="mt10" v-model.trim="form.category" placeholder="文件分类" />
     <span slot="footer" class="dialog-footer">
       <el-button @click="dialogVisible = false">取 消</el-button>
@@ -28,7 +32,8 @@ export default {
         sync: false,
         filename: '',
         origin: 'http://aikanvod.miguvideo.net',
-        category: 'migu'
+        category: 'migu',
+        innerNet: true
       }
     }
   },
@@ -49,13 +54,19 @@ export default {
       if (val === false) {
         this.$emit('update:show', false)
       }
+    },
+    'form.origin': function (val) {
+      this.form.innerNet = /\.net/.test(val)
     }
   },
 
   methods: {
     confirm () {
-      if (!this.form.filename) {
+      if (!this.form.filename && !this.form.innerNet) {
         this.$message.error('请输入文件名')
+        return
+      } else if (this.form.innerNet && !this.form.file) {
+        this.$message.error('请选择文件')
         return
       }
       this.$emit('confirm', this.form)
