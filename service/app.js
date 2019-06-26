@@ -68,6 +68,12 @@ function generate (state, cb) {
 
 async function upload (fileBuffer, filename, category, origin) {
   return new Promise((resolve, reject) => {
+    console.log({
+      // upfile: fileBuffer
+      file: fileBuffer,
+      name: filename,
+      src: category
+    })
     request.post(
       {
         // url: 'https://filesystem.api.jituancaiyun.com/sfs/webUpload/srvfile?fileType=2&src=cdn',
