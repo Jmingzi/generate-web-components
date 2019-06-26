@@ -58,6 +58,12 @@
       <div class="mt10">
         <el-button
           type="primary"
+          @click="showCdnModal = true"
+        >
+          同步文件到cdn
+        </el-button>
+        <el-button
+          type="primary"
           @click="saveLocal()"
         >
           保存到本地
