@@ -4,7 +4,7 @@
     :visible.sync="dialogVisible"
     width="300px"
   >
-    <el-checkbox v-model="form.sync">是否需要同步本地文件到远端</el-checkbox>
+    <el-checkbox v-if="!!root" v-model="form.sync">是否需要同步本地文件到远端</el-checkbox>
     <el-input class="mt10" v-model.trim="form.filename" placeholder="输入文件名称，逗号分隔" />
     <el-input class="mt10" v-model.trim="form.origin" placeholder="cdn 服务器地址" />
     <el-input class="mt10" v-model.trim="form.category" placeholder="文件分类" />
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Cdn.vue',
 
@@ -33,6 +35,10 @@ export default {
 
   props: {
     show: Boolean
+  },
+
+  computed: {
+    ...mapGetters(['root'])
   },
 
   watch: {
