@@ -159,7 +159,7 @@ app.get('/generate/cdn', async function (req, res) {
         fileMap[file] = JSON.parse(uploadRes).value
       } catch (e) {
         // res.status(500).send(`${file}.js 不存在`)
-        fileMap[file] = `${file}.js 不存在`
+        fileMap[file] = e.message || `${file}.js 不存在`
       }
       // fileMap[file] = JSON.parse(uploadRes).fileUrl.replace('https://statics.jituancaiyun.com', 'https://global.uban360.com')
     }
