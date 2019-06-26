@@ -29,10 +29,17 @@
         </el-button>
         <el-button
           type="primary"
+          @click="showCdnModal = true"
+        >
+          同步文件到cdn
+        </el-button>
+        <el-button
+          type="primary"
           @click="create"
         >
           新建组件
         </el-button>
+        <!--<input type="file" @change="cdn">-->
       </div>
     </template>
     <template v-else>
@@ -76,7 +83,6 @@
       />
     </div>
 
-
     <div v-show="demoCode" class="code">
       <p class="mb10 list__title">代码演示</p>
       <el-alert
@@ -85,6 +91,11 @@
       </el-alert>
       <pre v-text="demoCode" />
     </div>
+
+    <cdn-modal
+      :show.sync="showCdnModal"
+      @confirm="cdn"
+    />
   </div>
 </template>
 
@@ -93,6 +104,7 @@ import { mapState, mapMutations, mapGetters } from 'vuex'
 import axios from 'axios'
 // import qs from 'qs'
 import Tree from '../components/Tree'
+import CdnModal from '../components/Cdn'
 import { recursionRelation } from '../assets/js/render/util'
 import { create } from '../assets/js/render'
 import { completeField } from '../assets/js/util'
@@ -102,7 +114,8 @@ export default {
   name: 'List',
 
   components: {
-    Tree
+    Tree,
+    CdnModal
   },
 
   data () {
@@ -112,7 +125,8 @@ export default {
         label: 'className',
         children: 'children'
       },
-      demoCode: ''
+      demoCode: '',
+      showCdnModal: false
     }
   },
 
@@ -283,12 +297,26 @@ export default {
 
     async sync () {
       const loading = this.$loading()
-      // await axios.get('/generate/sync', {
-      await axios.get('http://localhost:3003/generate/sync', {
+      await axios.get('/generate/sync', {
+      // await axios.get('http://localhost:3003/generate/sync', {
         timeout: 120000
       })
       loading.close()
       this.$message.success('同步到 /data/webapps/miguvideo.net/aikanvod.miguvideo.net/h5-generate/lib-auto-sync 成功')
+    },
+
+    async cdn ({ filename, sync, origin, category }) {
+      if (sync) {
+        await this.onlySave()
+      }
+      const { data } = await axios.get(`/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`)
+      this.$alert(`<pre>${data}</pre>`, '文件映射关系', {
+        dangerouslyUseHTMLString: true
+      })
+      // const form = new FormData()
+      // form.append('file', e.target.files[0])
+      // form.append('name', 'aaa')
+      // axios.post('http://aikanvod.miguvideo.net/ifs/upload', form)
     },
 
     delAttr () {

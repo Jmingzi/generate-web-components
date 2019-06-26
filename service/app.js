@@ -66,18 +66,21 @@ function generate (state, cb) {
   }
 }
 
-async function upload (fileBuffer) {
+async function upload (fileBuffer, filename, category, origin) {
   return new Promise((resolve, reject) => {
     request.post(
       {
-        url: 'https://filesystem.api.jituancaiyun.com/sfs/webUpload/srvfile?fileType=2&src=cdn',
+        // url: 'https://filesystem.api.jituancaiyun.com/sfs/webUpload/srvfile?fileType=2&src=cdn',
+        url: `${origin}/ifs/upload`,
         formData: {
-          // upfile: fs.createReadStream(path.resolve(__dirname, 'public', file))
-          upfile: fileBuffer
+          // upfile: fileBuffer
+          file: fileBuffer,
+          name: filename,
+          category
         },
         headers: {
-          Origin: 'https://internal.jituancaiyun.com',
-          Referer: 'https://internal.jituancaiyun.com/fe/upload/index.html'
+          // Origin: 'https://internal.jituancaiyun.com',
+          // Referer: 'https://internal.jituancaiyun.com/fe/upload/index.html'
         }
       },
       (err, httpResponse, body) => {
@@ -139,7 +142,7 @@ app.get('/generate/sync', async function (req, res) {
 
 app.get('/generate/cdn', async function (req, res) {
   // 多个文件
-  const filename = req.query.filename
+  const { filename, category, origin } = req.query
   const root = path.resolve(__dirname, 'public')
   const fileMap = {}
   if (!filename) {
@@ -150,14 +153,17 @@ app.get('/generate/cdn', async function (req, res) {
       const file = fileArr[i]
       let buffer
       try {
-        buffer = fs.readFileSync(path.resolve(root, `${file}.js`))
+        // buffer = fs.readFileSync(path.resolve(root, `${file}.js`))
+        buffer = fs.createReadStream(path.resolve(root, `${file}.js`))
+        const uploadRes = await upload(buffer, `${file}.js`, category, origin)
+        fileMap[file] = JSON.parse(uploadRes).value
       } catch (e) {
-        res.status(500).send(`${file}.js 不存在`)
+        // res.status(500).send(`${file}.js 不存在`)
+        fileMap[file] = `${file}.js 不存在`
       }
-      const uploadRes = await upload(buffer)
-      fileMap[file] = JSON.parse(uploadRes).fileUrl.replace('https://statics.jituancaiyun.com', 'https://global.uban360.com')
+      // fileMap[file] = JSON.parse(uploadRes).fileUrl.replace('https://statics.jituancaiyun.com', 'https://global.uban360.com')
     }
-    res.status(200).send(`window.componentsMap = ${JSON.stringify(fileMap)}`)
+    res.status(200).send(`window.componentsMap = ${JSON.stringify(fileMap, null, 2)}`)
   }
 })
 
