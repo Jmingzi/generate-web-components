@@ -319,7 +319,7 @@ export default {
         // `http://localhost:3003/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
         `/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
       )
-      this.$alert(`<pre>${data}</pre>`, '文件映射关系', {
+      this.$alert(`<pre style="white-space: pre-wrap">${data}</pre>`, '文件映射关系', {
         dangerouslyUseHTMLString: true
       })
       // const form = new FormData()
