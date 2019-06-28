@@ -390,6 +390,6 @@ export default {
     background-color #f2f2f2
     white-space pre-wrap
 .tree__wrap
-  height calc(100vh - 420px)
+  height calc(100vh - 460px)
   overflow: auto
 </style>
