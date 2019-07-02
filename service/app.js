@@ -29,9 +29,7 @@ function generate (state, cb) {
 
   // 添加 polyfill
   // Reflect 和 customElements
-  script += polyfill()
-
-  const content = `(function () {
+  const content = `${polyfill()}(function () {
     const state = ${JSON.stringify(state)}
     // @ts-ignore
     defineElem(state.components, state.relationShip, state.propsRelation)
