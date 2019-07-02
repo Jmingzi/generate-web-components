@@ -64,14 +64,14 @@ function generate (state, cb) {
     fs.writeFileSync(commonPath, script, 'utf8')
     try {
       execSync(`tsc ${commonPath} --target es3`)
+      // define.js
+      // 添加 polyfill
+      // Reflect 和 customElements
+      const defineJs = path.resolve(root, 'define.js')
+      fs.writeFileSync(defineJs, polyfill() + fs.readFileSync(defineJs, 'utf8'), 'utf8')
     } catch (e) {
       throw e
     }
-    // define.js
-    // 添加 polyfill
-    // Reflect 和 customElements
-    const defineJs = path.resolve(root, 'define.js')
-    fs.writeFileSync(defineJs, polyfill() + fs.readFileSync(defineJs, 'utf8'), 'utf8')
   }
 
   try {
