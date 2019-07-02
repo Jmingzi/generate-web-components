@@ -11,10 +11,25 @@ const request = require('request')
 app.use(bodyParser.json())
 // app.use(bodyParser.urlencoded({ extended: true }))
 
+function polyfill () {
+  let str = `\nif (!window.Reflect) {\n`
+  str += fs.readFileSync(path.resolve(__dirname, './polyfill/reflect.js'), 'utf8')
+  str += '\n}\n'
+
+  str += `if (!window.customElements) {\n`
+  str += fs.readFileSync(path.resolve(__dirname, './polyfill/webcomponents-bundle.js'), 'utf8')
+  str += '\n}\n'
+  return str
+}
+
 function generate (state, cb) {
   const fileName = `${state.components[0].name}.ts`
   const fileNameJs = `${state.components[0].name}.js`
   let script = ''
+
+  // 添加 polyfill
+  // Reflect 和 customElements
+  script += polyfill()
 
   const content = `(function () {
     const state = ${JSON.stringify(state)}

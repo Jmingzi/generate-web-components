@@ -251,8 +251,13 @@ export function updateRootPropsRelation (root: any) {
 
 function loadComponents (nameArr: any, path: any) {
   const _load = (name: string) => new Promise((resolve, reject) => {
+    if (document.getElementById(name)) {
+      resolve()
+      return
+    }
     const script = document.createElement('script')
     const version = location.search.match(/v=(\d+)/)
+    script.id = name
     script.src =  `${path + name}.js?v=${version && version.index && version.index > -1 ? version[1] : Date.now()}`
     script.onload = () => {
       resolve()
