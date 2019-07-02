@@ -92,7 +92,7 @@
     <div v-show="demoCode" class="code">
       <p class="mb10 list__title">代码演示</p>
       <el-alert
-        title="使用组件时，不要忘了拷贝 props-relation 属性"
+        title="如果 props 使用默认值，可以不写属性"
         type="warning">
       </el-alert>
       <pre v-text="demoCode" />
@@ -158,7 +158,7 @@ export default {
           if (val.props) {
             const arr = val.props.split(',')
             this.demoCode += arr.length ? arr.slice(1).reduce((sum, item) => sum + `\n  ${item}=""`, '') : ''
-            this.demoCode += arr.length > 1 ? `\n  props-relation="${val.propsRelation || ''}"\n` : ''
+            // this.demoCode += arr.length > 1 ? `\n  props-relation="${val.propsRelation || ''}"\n` : ''
           }
           this.demoCode += `/>`
         }
