@@ -38,7 +38,7 @@ export default {
         filename: '',
         origin: 'https://developer.e.uban360.com',
         category: 'migu',
-        innerNet: true
+        innerNet: false
       }
     }
   },
