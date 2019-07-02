@@ -69,7 +69,6 @@ function generate (state, cb) {
       // Reflect 和 customElements
       const defineJs = path.resolve(root, 'define.js')
       const defineJsContent = polyfill() + fs.readFileSync(defineJs, 'utf8')
-      console.log(defineJsContent)
       fs.writeFileSync(defineJs, defineJsContent, 'utf8')
     } catch (e) {
       throw e
