@@ -27,9 +27,7 @@ function generate (state, cb) {
   const fileNameJs = `${state.components[0].name}.js`
   let script = ''
 
-  // 添加 polyfill
-  // Reflect 和 customElements
-  const content = `${polyfill()}(function () {
+  const content = `(function () {
     const state = ${JSON.stringify(state)}
     // @ts-ignore
     defineElem(state.components, state.relationShip, state.propsRelation)
@@ -69,6 +67,10 @@ function generate (state, cb) {
     } catch (e) {
       throw e
     }
+    // define.js
+    // 添加 polyfill
+    // Reflect 和 customElements
+    fs.writeFileSync(commonPath, polyfill() + fs.readFileSync(commonPath, 'utf8'), 'utf8')
   }
 
   try {
