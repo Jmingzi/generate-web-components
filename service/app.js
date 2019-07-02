@@ -63,14 +63,15 @@ function generate (state, cb) {
     script = script.replace('function loadComponents', '//@ts-ignore\nwin.loadComponents = function')
     fs.writeFileSync(commonPath, script, 'utf8')
     try {
-      execSync(`tsc ${commonPath} --target es5`)
+      execSync(`tsc ${commonPath} --target es3`)
     } catch (e) {
       throw e
     }
     // define.js
     // 添加 polyfill
     // Reflect 和 customElements
-    fs.writeFileSync(commonPath, polyfill() + fs.readFileSync(commonPath, 'utf8'), 'utf8')
+    const defineJs = path.resolve(root, 'define.js')
+    fs.writeFileSync(defineJs, polyfill() + fs.readFileSync(defineJs, 'utf8'), 'utf8')
   }
 
   try {
