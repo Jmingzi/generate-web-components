@@ -250,7 +250,8 @@ export default {
         data: {
           state: {
             relationShip: this.relationShip,
-            components: this.components
+            components: this.components,
+            propsRelation: this.root.propsRelation
           }
         }
       }).then(res => {

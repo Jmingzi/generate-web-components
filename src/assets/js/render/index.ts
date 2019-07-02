@@ -26,7 +26,12 @@ export const updateStyle = (rootData: Component, updateData: Component) => {
 }
 
 // substr start for service
-function addSpecial (component: any, div: any, noEvent?: boolean, root?: any) {
+function addSpecial (
+  component: any,
+  div: any,
+  noEvent?: boolean,
+  root?: any
+) {
   // 文本
   if (component.type === 2) {
     div.innerHTML = component.text
@@ -70,8 +75,15 @@ Object.setPrototypeOf(HTMLElement, BuiltInHTMLElement)
 const PROPS_RELATION = 'props-relation'
 let customElemNumber = 0
 
-function defineElem (components: Array<Component>, relationShip?: ComponentRelationShip) {
+function defineElem (
+  components: Array<Component>,
+  relationShip?: ComponentRelationShip,
+  // 在实际使用时才传的参数
+  // 目的是不需要用户手动传
+  propsRelation?: any
+) {
   const root: Component = components.find(x => x.root) || components[0]
+
   customElements.define(root.name as string, class Custom extends HTMLElement {
     static get observedAttributes() {
       return root.props ? root.props.split(',') :  []
@@ -130,13 +142,20 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         shadow.appendChild(rootDiv)
       }
 
+      // 初始化唯一标识
       this.initNumber()
+
       // @ts-ignore
       queen.add(this.number, {
         id: root.id,
         className: root.className,
         elem: this
       })
+
+      // 初始化 propsRelation
+      if (propsRelation) {
+        this.setPropsRelation(propsRelation)
+      }
     }
 
     initNumber () {
@@ -183,6 +202,7 @@ function defineElem (components: Array<Component>, relationShip?: ComponentRelat
         }
       }
     }
+
     setPropsRelation (value: string) {
       const propsItem = value.split(',')
       this.propsRelation = propsItem.map((x: string) => {

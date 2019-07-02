@@ -19,7 +19,7 @@ function generate (state, cb) {
   const content = `(function () {
     const state = ${JSON.stringify(state)}
     // @ts-ignore
-    defineElem(state.components, state.relationShip)
+    defineElem(state.components, state.relationShip, state.propsRelation)
   })()`
   const root = path.resolve(__dirname, './public/')
   const filePath = path.resolve(root, fileName)
