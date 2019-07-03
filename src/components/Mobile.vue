@@ -48,6 +48,7 @@ export default Vue.extend({
     height calc(100vh - 200px)
     border 1px #ccc solid
     background-color #fff
-    overflow: hidden
+    // overflow: hidden
     transform translate(0)
+    overflow auto
 </style>

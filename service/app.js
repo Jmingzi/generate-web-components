@@ -23,11 +23,16 @@ function polyfill () {
 }
 
 function generate (state, cb) {
-  const fileName = `${state.components[0].name}.ts`
-  const fileNameJs = `${state.components[0].name}.js`
+  const componentName = state.components[0].name
+  const fileName = `${componentName}.ts`
+  const fileNameJs = `${componentName}.js`
   let script = ''
 
   const content = `(function () {
+    if (customElements.get('${componentName}')) {
+      console.log('${componentName} 已被定义')
+      return
+    }
     const state = ${JSON.stringify(state)}
     // @ts-ignore
     defineElem(state.components, state.relationShip, state.propsRelation)
