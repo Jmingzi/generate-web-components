@@ -46,7 +46,7 @@ function addSpecial (
   if (!noEvent) {
     // 事件句柄，便于 remove
     component.eventCallbackHandler = (e: Event) => {
-      e.stopPropagation()
+      // e.stopPropagation()
       const click = root && root.getAttribute('onclick')
       if (click) {
         new Function('e', click)(e)
