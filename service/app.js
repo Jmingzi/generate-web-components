@@ -210,11 +210,13 @@ app.get('/generate/file', async function (req, res) {
     return
   }
 
-  let result
-  content.replace(/\(function \(\) \{([\s\S]+?)\/\/ @ts-ignore/, (a, b) => {
-    result = b.replace('var state = ', '').trim()
-  })
-  res.status(200).json(JSON.parse(result.substr(0, result.length - 1)))
+  let result = content.match(/var state = ([\s\S]+)\/\/ @ts-ignore/)
+  if (!result[1]) {
+    res.status(500).send('文件格式不对')
+  } else {
+    result = result[1].trim()
+    res.status(200).json(JSON.parse(result.substr(0, result.length - 1)))
+  }
 })
 
 /**
