@@ -68,8 +68,6 @@ export const getStyleBase = (style: any, returnObj?: boolean): any => {
     layout
   } = style
   const base = {
-    width: isAutoWidth ? 'auto' : addUnit(width, 'px'),
-    height: isAutoHeight ? 'auto' : addUnit(height, 'px'),
     textAlign: textAlign
   }
   if (!isAutoWidth) {
