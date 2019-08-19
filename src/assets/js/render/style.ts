@@ -109,7 +109,8 @@ function getStyleBorder (style: any) {
 function getStyleShadow (style: any) {
   const obj = objAddUnit(style, 'px')
   const res = {
-    boxShadow: `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`
+    boxShadow: `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`,
+    webkitBoxShadow: `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`
   }
   return obj.blur ? transferToStyleString(res) : ''
 }
@@ -137,14 +138,20 @@ function getStylePosition (style: any) {
     result.top = '50%'
     result.bottom = ''
     result.right = ''
+    result.webkitTransform = `translate(-50%, -50%)`
+    result.msTransform = `translate(-50%, -50%)`
     result.transform = `translate(-50%, -50%)`
   } else if (result.hCenter) {
     result.left = '50%'
     result.right = ''
+    result.webkitTransform = `translateX(-50%)`
+    result.msTransform = `translateX(-50%)`
     result.transform = `translateX(-50%)`
   } else if (result.vCenter) {
     result.top = '50%'
     result.bottom = ''
+    result.webkitTransform = `translateY(-50%)`
+    result.msTransform = `translateY(-50%)`
     result.transform = `translateY(-50%)`
   }
   delete result.hCenter
