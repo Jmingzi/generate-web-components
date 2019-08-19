@@ -72,6 +72,12 @@ export const getStyleBase = (style: any, returnObj?: boolean): any => {
     height: isAutoHeight ? 'auto' : addUnit(height, 'px'),
     textAlign: textAlign
   }
+  if (!isAutoWidth) {
+    base.width = addUnit(width, 'px')
+  }
+  if (!isAutoHeight) {
+    base.height = addUnit(height, 'px')
+  }
   if (marginAuto) {
     // @ts-ignore
     base.margin = '0 auto'
