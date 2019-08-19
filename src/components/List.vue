@@ -321,12 +321,13 @@ export default {
         form.append('file', file)
         form.append('name', file.name)
         form.append('src', category)
+        form.append('mToken', document.cookie.split('=')[1])
         const { data } = await axios.post(`${origin}/ifs/upload`, form)
         this.$alert(data.value)
       } else {
         const { data } = await axios.get(
           // `http://localhost:3003/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
-          `/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
+          `/generate/cdn?filename=${filename}&category=${category}&origin=${origin}&mToken=${document.cookie.split('=')[1]}`
         )
         this.$alert(`<pre style="white-space: pre-wrap">${data}</pre>`, '文件映射关系', {
           dangerouslyUseHTMLString: true

@@ -100,7 +100,7 @@ function generate (state, cb) {
   }
 }
 
-async function upload (fileBuffer, filename, category, origin) {
+async function upload (fileBuffer, filename, category, origin, mToken) {
   return new Promise((resolve, reject) => {
     request.post(
       {
@@ -115,6 +115,7 @@ async function upload (fileBuffer, filename, category, origin) {
         headers: {
           // Origin: 'https://internal.jituancaiyun.com',
           // Referer: 'https://internal.jituancaiyun.com/fe/upload/index.html'
+          Cookie: `mToken=${mToken}`
         }
       },
       (err, httpResponse, body) => {
@@ -176,7 +177,7 @@ app.get('/generate/sync', async function (req, res) {
 
 app.get('/generate/cdn', async function (req, res) {
   // 多个文件
-  const { filename, category, origin } = req.query
+  const { filename, category, origin, mToken } = req.query
   const root = path.resolve(__dirname, 'public')
   const fileMap = {}
   if (!filename) {
@@ -189,7 +190,10 @@ app.get('/generate/cdn', async function (req, res) {
       try {
         // buffer = fs.readFileSync(path.resolve(root, `${file}.js`))
         buffer = fs.createReadStream(path.resolve(root, `${file}.js`))
-        const uploadRes = await upload(buffer, `${file}.js`, category, origin)
+        const uploadRes = await upload(buffer, `${file}.js`, category, origin, mToken).catch(() => {
+          res.status(500).send('上传失败')
+          return Promise.reject(new Error('上传失败'))
+        })
         fileMap[file] = JSON.parse(uploadRes).value
       } catch (e) {
         // res.status(500).send(`${file}.js 不存在`)
