@@ -8,7 +8,7 @@
     <el-checkbox v-model="form.innerNet">是否是内网</el-checkbox>
     <el-select class="mt10" v-model="form.origin">
       <el-option label="http://aikanvod.miguvideo.net" value="http://aikanvod.miguvideo.net" />
-      <el-option label="https://aikanvod.miguvideo.com" value="https://aikanvod.miguvideo.com" />
+      <el-option label="https://gw.aikan.miguvideo.com" value="https://gw.aikan.miguvideo.com" />
       <el-option label="https://developer.e.uban360.com" value="https://developer.e.uban360.com" />
     </el-select>
     <!--<el-input class="mt10" v-model.trim="form.origin" placeholder="cdn 服务器地址" />-->
