@@ -105,7 +105,7 @@ async function upload (fileBuffer, filename, category, origin) {
     request.post(
       {
         // url: 'https://filesystem.api.jituancaiyun.com/sfs/webUpload/srvfile?fileType=2&src=cdn',
-        url: `${origin}/ifs/upload`,
+        url: `${origin}/ygw/external/upload`,
         formData: {
           // upfile: fileBuffer
           file: fileBuffer,
