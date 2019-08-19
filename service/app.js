@@ -12,8 +12,16 @@ app.use(bodyParser.json())
 // app.use(bodyParser.urlencoded({ extended: true }))
 
 function polyfill () {
-  let str = `\nif (!window.Reflect) {\n`
-  str += fs.readFileSync(path.resolve(__dirname, './polyfill/reflect.js'), 'utf8')
+  // let str = `\nif (!window.Reflect) {\n`
+  // str += fs.readFileSync(path.resolve(__dirname, './polyfill/reflect.js'), 'utf8')
+  // str += '\n}\n'
+  // 判断安卓版本5以下 或者 !window.Reflect 不存在
+  let str = `var androidAppVersion = navigator.userAgent.match(/Android ([0-9]+)/i);
+  var iOSAppVersion = navigator.userAgent.match(/iPhone OS ([0-9]+)/i);
+  console.log('androidAppVersion', androidAppVersion, 'iOSAppVersion', iOSAppVersion);
+  if (androidAppVersion && androidAppVersion < 5 || iOSAppVersion && iOSAppVersion < 10 || !window.Reflect) {\n`
+  // str = `\nif (!window.Reflect) {\n`
+  str += fs.readFileSync(path.resolve(__dirname, './polyfill/core.js'), 'utf8')
   str += '\n}\n'
 
   str += `if (!window.customElements) {\n`
