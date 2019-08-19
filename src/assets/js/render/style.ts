@@ -110,7 +110,10 @@ function getStyleShadow (style: any) {
   const obj = objAddUnit(style, 'px')
   const res = {
     boxShadow: `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`,
-    '-webkit-box-shadow': `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`
+    '-ms-box-shadow': `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`,
+    '-moz-box-shadow': `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`,
+    '-webkit-box-shadow': `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`,
+    '-o-box-shadow': `${obj.hShadow} ${obj.vShadow} ${obj.blur} ${obj.spread} ${obj.color}`
   }
   return obj.blur ? transferToStyleString(res) : ''
 }
@@ -138,21 +141,27 @@ function getStylePosition (style: any) {
     result.top = '50%'
     result.bottom = ''
     result.right = ''
-    result['-webkit-transform'] = `translate(-50%, -50%)`
-    result['-ms-transform'] = `translate(-50%, -50%)`
     result.transform = `translate(-50%, -50%)`
+    result['-ms-transform'] = `translate(-50%, -50%)`
+    result['-moz-transform'] = `translate(-50%, -50%)`
+    result['-webkit-transform'] = `translate(-50%, -50%)`
+    result['-o-transform'] = `translate(-50%, -50%)`
   } else if (result.hCenter) {
     result.left = '50%'
     result.right = ''
-    result['-webkit-transform'] = `translateX(-50%)`
-    result['-ms-transform'] = `translateX(-50%)`
     result.transform = `translateX(-50%)`
+    result['-ms-transform'] = `translateX(-50%)`
+    result['-moz-transform'] = `translateX(-50%)`
+    result['-webkit-transform'] = `translateX(-50%)`
+    result['-o-transform'] = `translateX(-50%)`
   } else if (result.vCenter) {
     result.top = '50%'
     result.bottom = ''
-    result['-webkit-transform'] = `translateY(-50%)`
-    result['-ms-transform'] = `translateY(-50%)`
     result.transform = `translateY(-50%)`
+    result['-ms-transform'] = `translateY(-50%)`
+    result['-moz-transform'] = `translateY(-50%)`
+    result['-webkit-transform'] = `translateY(-50%)`
+    result['-o-transform'] = `translateY(-50%)`
   }
   delete result.hCenter
   delete result.vCenter

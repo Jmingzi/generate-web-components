@@ -100,9 +100,9 @@ export const schema = {
         type: 'select',
         options: [
           { label: '无', value: '' },
-          { label: 'flex-between', value: 'display:flex;justify-content:space-between;' },
-          { label: 'flex-center', value: 'display:flex;justify-content:center;align-items:center;' },
-          { label: 'flex-between-center', value: 'display:flex;justify-content:space-between;align-items:center;' },
+          { label: 'flex-between', value: 'display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;' },
+          { label: 'flex-center', value: 'display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;' },
+          { label: 'flex-between-center', value: 'display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:center;-ms-flex-align:center;align-items:center;' },
         ]
       },
       customStyle: {
@@ -384,7 +384,7 @@ export const ItemStyle = {
     ellipse: false,
     overflow: undefined,
     layout: undefined,
-    customStyle: 'box-sizing:border-box;'
+    customStyle: '-webkit-box-sizing:border-box;box-sizing:border-box;'
   },
   margin: {
     marginTop: undefined,
