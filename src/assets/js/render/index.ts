@@ -39,9 +39,8 @@ function addSpecial (
     const img = document.createElement('img')
     img.setAttribute('width', '100%')
     img.setAttribute('height', '100%')
-    img.style.borderRadius = 'inherit'
+    img.style.borderRadius = component.style.border.borderRadius + 'px'
     img.src = component.imgSrc
-    console.log(component.style)
     div.style.fontSize = 0
     div.appendChild(img)
   }
