@@ -40,6 +40,7 @@ function addSpecial (
     img.setAttribute('width', '100%')
     img.setAttribute('height', '100%')
     img.style.borderRadius = component.style.border.borderRadius + 'px'
+    img.style.border = 'none'
     img.src = component.imgSrc
     div.style.fontSize = 0
     div.appendChild(img)
