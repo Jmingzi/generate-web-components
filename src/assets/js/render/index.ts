@@ -41,7 +41,7 @@ function addSpecial (
     img.setAttribute('height', '100%')
     img.style.borderRadius = 'inherit'
     img.src = component.imgSrc
-    console.log(div.style)
+    console.log(component.style)
     div.style.fontSize = 0
     div.appendChild(img)
   }
