@@ -43,7 +43,7 @@ function addSpecial (
     img.src = component.imgSrc
     // @ts-ignore
     if (window.androidAppVersion && window.androidAppVersion[1] && window.androidAppVersion[1] < 5) {
-      component.style.border.borderColor = undefined
+      component.style.border.borderColor = 'transparent'
     }
     div.style.fontSize = 0
     div.appendChild(img)
