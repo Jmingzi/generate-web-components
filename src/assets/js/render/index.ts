@@ -40,8 +40,11 @@ function addSpecial (
     img.setAttribute('width', '100%')
     img.setAttribute('height', '100%')
     img.style.borderRadius = component.style.border.borderRadius + 'px'
-    img.style.border = 'none'
     img.src = component.imgSrc
+    // @ts-ignore
+    if (window.androidAppVersion && window.androidAppVersion[1] && window.androidAppVersion[1] < 5) {
+      component.style.border.borderColor = undefined
+    }
     div.style.fontSize = 0
     div.appendChild(img)
   }
