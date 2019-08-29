@@ -53,9 +53,10 @@ function addSpecial (
     component.eventCallbackHandler = (e: Event) => {
       // e.stopPropagation()
       const click = root && root.getAttribute('onclick')
-      if (click) {
-        new Function('e', click)(e)
-      } else {
+      if (click && component.root) {
+        // 不要调用函数，否则函数体会被执行2遍
+        new Function('e', click)
+      } else if (component.event.onClick) {
         new Function('e', component.event.onClick)(e)
       }
     }
