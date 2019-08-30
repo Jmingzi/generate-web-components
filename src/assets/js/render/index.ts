@@ -261,10 +261,20 @@ function loadComponents (nameArr: any, path: any) {
       resolve()
       return
     }
+
     const script = document.createElement('script')
-    const version = location.search.match(/v=(\d+)/)
+    // const version = location.search.match(/v=(\d+)/)
+    // const versionHash = location.hash.match(/v=(\d+)/)
+    // let v: any = Date.now()
+    // if (
+    //   (version && version.index !== undefined && version.index > -1) ||
+    //   (versionHash && versionHash.index !== undefined && versionHash.index > -1)
+    // ) {
+    //   v = version ? version[1] : versionHash ? versionHash[1] : 1
+    // }
+    const v = 1
     script.id = name
-    script.src =  `${path + name}.js?v=${version && version.index && version.index > -1 ? version[1] : Date.now()}`
+    script.src =  `${path + name}.js?v=${v}`
     script.onload = () => {
       resolve()
     }
