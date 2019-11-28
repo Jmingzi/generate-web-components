@@ -191,7 +191,7 @@ app.get('/generate/cdn', async function (req, res) {
         buffer = fs.createReadStream(path.resolve(root, `${file}.js`))
         let uploadRes = await upload(buffer, `${file}.js`, category, origin, mToken)
         uploadRes = JSON.parse(uploadRes)
-        fileMap[file] = uploadRes.value || uploadRes.message
+        fileMap[file] = uploadRes.value || `${uploadRes.path} 请检查 mToken 是否为 线上/测试 环境`
       } catch (e) {
         fileMap[file] = e.message || `${file}.js 不存在`
       }

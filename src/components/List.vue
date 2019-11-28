@@ -302,6 +302,21 @@ export default {
       })
     },
 
+    get(name) {
+      let cookieValue = null
+      if (document.cookie && document.cookie !== '') {
+        let cookies = document.cookie.split(';')
+        for (let i = 0; i < cookies.length; i++) {
+          let cookie = cookies[i].trim()
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+            break
+          }
+        }
+      }
+      return cookieValue
+    },
+
     async sync () {
       const loading = this.$loading()
       await axios.get('/generate/sync', {
@@ -321,13 +336,13 @@ export default {
         form.append('file', file)
         form.append('name', file.name)
         form.append('src', category)
-        form.append('mToken', document.cookie.split('=')[1])
+        form.append('mToken', this.get('mToken'))
         const { data } = await axios.post(`${origin}/ifs/upload`, form)
         this.$alert(data.value)
       } else {
         const { data } = await axios.get(
           // `http://localhost:3003/generate/cdn?filename=${filename}&category=${category}&origin=${origin}`
-          `/generate/cdn?filename=${filename}&category=${category}&origin=${origin}&mToken=${document.cookie.split('=')[1]}`
+          `/generate/cdn?filename=${filename}&category=${category}&origin=${origin}&mToken=${this.get('mToken')}`
         )
         this.$alert(`<pre style="white-space: pre-wrap">${data}</pre>`, '文件映射关系', {
           dangerouslyUseHTMLString: true
