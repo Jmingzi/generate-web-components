@@ -188,18 +188,16 @@ app.get('/generate/cdn', async function (req, res) {
       const file = fileArr[i]
       let buffer
       try {
-        // buffer = fs.readFileSync(path.resolve(root, `${file}.js`))
         buffer = fs.createReadStream(path.resolve(root, `${file}.js`))
-        const uploadRes = await upload(buffer, `${file}.js`, category, origin, mToken).catch(() => {
-          res.status(500).send('上传失败')
-          return Promise.reject(new Error('上传失败'))
+        const uploadRes = await upload(buffer, `${file}.js`, category, origin, mToken).catch(e => {
+          return Promise.reject(e)
         })
-        fileMap[file] = JSON.parse(uploadRes).value
+        fileMap[file] = typeof uploadRes === 'object'
+          ? uploadRes
+          : JSON.parse(uploadRes).value
       } catch (e) {
-        // res.status(500).send(`${file}.js 不存在`)
         fileMap[file] = e.message || `${file}.js 不存在`
       }
-      // fileMap[file] = JSON.parse(uploadRes).fileUrl.replace('https://statics.jituancaiyun.com', 'https://global.uban360.com')
     }
     res.status(200).send(`window.componentsMap = ${JSON.stringify(fileMap, null, 2)}`)
   }
