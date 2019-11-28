@@ -180,6 +180,7 @@ app.get('/generate/cdn', async function (req, res) {
   const { filename, category, origin, mToken } = req.query
   const root = path.resolve(__dirname, 'public')
   const fileMap = {}
+  console.log(mToken)
   if (!filename) {
     res.status(500).send('filename 必须传')
   } else {
@@ -192,6 +193,7 @@ app.get('/generate/cdn', async function (req, res) {
         const uploadRes = await upload(buffer, `${file}.js`, category, origin, mToken).catch(e => {
           return Promise.reject(e)
         })
+        console.log(uploadRes)
         fileMap[file] = typeof uploadRes === 'object'
           ? uploadRes
           : JSON.parse(uploadRes).value
