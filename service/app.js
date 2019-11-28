@@ -180,7 +180,6 @@ app.get('/generate/cdn', async function (req, res) {
   const { filename, category, origin, mToken } = req.query
   const root = path.resolve(__dirname, 'public')
   const fileMap = {}
-  console.log(mToken)
   if (!filename) {
     res.status(500).send('filename 必须传')
   } else {
@@ -190,10 +189,7 @@ app.get('/generate/cdn', async function (req, res) {
       let buffer
       try {
         buffer = fs.createReadStream(path.resolve(root, `${file}.js`))
-        const uploadRes = await upload(buffer, `${file}.js`, category, origin, mToken).catch(e => {
-          return Promise.reject(e)
-        })
-        console.log(uploadRes)
+        const uploadRes = await upload(buffer, `${file}.js`, category, origin, mToken)
         fileMap[file] = typeof uploadRes === 'object'
           ? uploadRes
           : JSON.parse(uploadRes).value
