@@ -189,11 +189,14 @@ app.get('/generate/cdn', async function (req, res) {
       let buffer
       try {
         buffer = fs.createReadStream(path.resolve(root, `${file}.js`))
+        console.log(1)
         const uploadRes = await upload(buffer, `${file}.js`, category, origin, mToken)
+        console.log(uploadRes)
         fileMap[file] = typeof uploadRes === 'object'
           ? uploadRes
           : JSON.parse(uploadRes).value
       } catch (e) {
+        console.log(e)
         fileMap[file] = e.message || `${file}.js 不存在`
       }
     }
